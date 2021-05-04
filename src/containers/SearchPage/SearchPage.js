@@ -176,7 +176,7 @@ export class SearchPageComponent extends Component {
           currentSearchParams={urlQueryParams}
         />
         <div className={css.container}>
-          <button className={css.toggleMap} onClick={this.toggleMap}> Map </button>
+          <button className={css.toggleMap} onClick={this.toggleMap}> { this.state.isMapOpen ? 'Close map' : 'Open map' } </button>
           <MainPanel
             urlQueryParams={validQueryParams}
             listings={listings}

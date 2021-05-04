@@ -45,7 +45,7 @@ export class SearchPageComponent extends Component {
     this.onMapMoveEnd = debounce(this.onMapMoveEnd.bind(this), SEARCH_WITH_MAP_DEBOUNCE);
     this.onOpenMobileModal = this.onOpenMobileModal.bind(this);
     this.onCloseMobileModal = this.onCloseMobileModal.bind(this);
-    this.toggleMap = this.toggleMap.bind(this);
+    this.onToggleMap = this.onToggleMap.bind(this);
   }
 
   // Callback to determine if new search is needed
@@ -101,8 +101,8 @@ export class SearchPageComponent extends Component {
     this.setState({ isMobileModalOpen: false });
   }
 
-  toggleMap(e) {
-    this.setState({ isMapOpen: !this.state.isMapOpen });
+  onToggleMap(e) {
+    this.setState({ isMapOpen: !this.state.isMapOpen});
   }
 
   render() {
@@ -176,7 +176,6 @@ export class SearchPageComponent extends Component {
           currentSearchParams={urlQueryParams}
         />
         <div className={css.container}>
-          <button className={css.toggleMap} onClick={this.toggleMap}> { this.state.isMapOpen ? 'Close map' : 'Open map' } </button>
           <MainPanel
             urlQueryParams={validQueryParams}
             listings={listings}
@@ -188,11 +187,14 @@ export class SearchPageComponent extends Component {
             onOpenModal={this.onOpenMobileModal}
             onCloseModal={this.onCloseMobileModal}
             onMapIconClick={onMapIconClick}
+            onToggleMap={this.onToggleMap}
             pagination={pagination}
             searchParamsForPagination={parse(location.search)}
             showAsModalMaxWidth={MODAL_BREAKPOINT}
             history={history}
+            isMapOpen={this.state.isMapOpen}
           />
+          
           { this.state.isMapOpen &&
           <ModalInMobile
             className={css.mapPanel}
@@ -220,7 +222,7 @@ export class SearchPageComponent extends Component {
                   messages={intl.messages}
                 />
               ) : null}
-            </div> 
+            </div>
           </ModalInMobile> }
         </div>
       </Page>

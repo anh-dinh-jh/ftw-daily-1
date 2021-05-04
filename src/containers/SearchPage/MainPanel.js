@@ -168,6 +168,8 @@ class MainPanel extends Component {
       showAsModalMaxWidth,
       filterConfig,
       sortConfig,
+      onToggleMap,
+      isMapOpen
     } = this.props;
 
     const primaryFilters = filterConfig.filter(f => f.group === 'primary');
@@ -229,6 +231,15 @@ class MainPanel extends Component {
 
     return (
       <div className={classes}>
+        <div className={css.mapSwitch}>
+          <span>Map: </span>
+          <label className={css.switch}>
+            <input type="checkbox" checked={isMapOpen} onChange={onToggleMap}/>
+            <span className= {css.slider}></span>
+          </label>
+        </div>
+
+
         <SearchFiltersPrimary
           className={css.searchFiltersPrimary}
           sortByComponent={sortBy('desktop')}

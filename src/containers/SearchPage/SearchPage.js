@@ -37,6 +37,7 @@ export class SearchPageComponent extends Component {
     this.state = {
       isSearchMapOpenOnMobile: props.tab === 'map',
       isMobileModalOpen: false,
+      isMapOpen: true,
     };
 
     this.searchMapListingsInProgress = false;
@@ -44,6 +45,7 @@ export class SearchPageComponent extends Component {
     this.onMapMoveEnd = debounce(this.onMapMoveEnd.bind(this), SEARCH_WITH_MAP_DEBOUNCE);
     this.onOpenMobileModal = this.onOpenMobileModal.bind(this);
     this.onCloseMobileModal = this.onCloseMobileModal.bind(this);
+    this.toggleMap = this.toggleMap.bind(this);
   }
 
   // Callback to determine if new search is needed
@@ -97,6 +99,10 @@ export class SearchPageComponent extends Component {
   // for example when a filter modal is opened in mobile view
   onCloseMobileModal() {
     this.setState({ isMobileModalOpen: false });
+  }
+
+  toggleMap(e) {
+    this.setState({ isMapOpen: !this.state.isMapOpen });
   }
 
   render() {
@@ -170,6 +176,7 @@ export class SearchPageComponent extends Component {
           currentSearchParams={urlQueryParams}
         />
         <div className={css.container}>
+          <button className={css.toggleMap} onClick={this.toggleMap}> Map </button>
           <MainPanel
             urlQueryParams={validQueryParams}
             listings={listings}
@@ -186,6 +193,7 @@ export class SearchPageComponent extends Component {
             showAsModalMaxWidth={MODAL_BREAKPOINT}
             history={history}
           />
+          { this.state.isMapOpen &&
           <ModalInMobile
             className={css.mapPanel}
             id="SearchPage.map"
@@ -194,6 +202,7 @@ export class SearchPageComponent extends Component {
             showAsModalMaxWidth={MODAL_BREAKPOINT}
             onManageDisableScrolling={onManageDisableScrolling}
           >
+            
             <div className={css.mapWrapper}>
               {shouldShowSearchMap ? (
                 <SearchMap
@@ -211,8 +220,8 @@ export class SearchPageComponent extends Component {
                   messages={intl.messages}
                 />
               ) : null}
-            </div>
-          </ModalInMobile>
+            </div> 
+          </ModalInMobile> }
         </div>
       </Page>
     );

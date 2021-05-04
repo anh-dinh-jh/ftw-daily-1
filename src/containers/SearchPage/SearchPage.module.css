@@ -127,6 +127,26 @@
   }
 }
 
+.toggleMap {
+  position: absolute;
+  right: 0;
+  top: 10vh;
+  width: 60px;
+  z-index: 2;
+  text-align: center;
+  border-width: 1px;
+  border-style: solid;
+  border-color: var(--matterColorNegative);
+  background-color: var(--matterColorLight);
+  color: var(--matterColor);
+  cursor: pointer;
+}
+
+.toggleMap:hover {
+  opacity: 0.8;
+}
+
+
 .sortBy {
   margin-right: 9px;
 }

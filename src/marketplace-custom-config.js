@@ -143,6 +143,74 @@ export const filters = [
       ],
     },
   },
+  {
+    id: 'subjects',
+    label: 'Subjects',
+    type: 'SelectMultipleFilter',
+    group: 'secondary',
+    queryParamNames: ['pub_subjects'],
+    config: {
+      searchMode: 'has_all',
+      options: [
+        {
+          key: 'maths',
+          label: 'Maths',
+        },
+        {
+          key: 'physics',
+          label: 'Physics',
+        },
+        {
+          key: 'chemistry',
+          label: 'Chemistry',
+        },
+      ],
+    },
+  },
+  {
+    id: 'levels',
+    label: 'Levels',
+    type: 'SelectMultipleFilter',
+    group: 'secondary',
+    queryParamNames: ['pub_levels'],
+    config: {
+      searchMode: 'has_all',
+      options: [
+        {
+          key: 'beginner',
+          label: 'Beginner',
+        },
+        {
+          key: 'intermediate',
+          label: 'Intermediate',
+        },
+        {
+          key: 'expert',
+          label: 'Expert',
+        },
+      ],
+    },
+  },
+  {
+    id: 'teaching-type',
+    label: 'Teaching Type',
+    type: 'SelectMultipleFilter',
+    group: 'secondary',
+    queryParamNames: ['pub_teaching-type'],
+    config: {
+      searchMode: 'has_all',
+      options: [
+        {
+          key: 'part-time',
+          label: 'Part Time',
+        },
+        {
+          key: 'full-time',
+          label: 'Full Time',
+        },
+      ],
+    },
+  },
 ];
 
 export const sortConfig = {

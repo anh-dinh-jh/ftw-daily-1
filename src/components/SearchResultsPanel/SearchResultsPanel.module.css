@@ -79,6 +79,22 @@
   }
 }
 
+.listingCardNoMap {
+  margin-bottom: 36px;
+  flex-basis: 100%;
+
+  @media (--viewportLarge) {
+    flex-basis: calc(33.33% - 12px);
+    margin-right: 12px;
+  }
+
+  @media (--viewportXLarge) {
+
+    flex-basis: calc(25% - 8px);
+    margin-right: 8px;
+  }
+}
+
 .pagination {
   /* margin-top: auto; pushes pagination to the end of the page. */
   margin-top: auto;

@@ -91,6 +91,11 @@
   @apply --marketplaceButtonStyles;
 }
 
+.createNewTeacherListingLink {
+  @apply --marketplaceButtonStyles;
+  margin-bottom: 24px;
+}
+
 .authenticationGreeting {
   /* Font */
   @apply --marketplaceH1FontStyles;

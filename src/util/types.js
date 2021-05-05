@@ -498,4 +498,9 @@ export const DATE_TYPE_DATETIME = 'datetime';
 
 propTypes.dateType = oneOf([DATE_TYPE_DATE, DATE_TYPE_DATETIME]);
 
+export const TEACHING_TYPE_PART_TIME = 'part-time';
+export const TEACHING_TYPE_FULL_TIME = 'full-time';
+
+propTypes.teachingType = oneOf([TEACHING_TYPE_PART_TIME, TEACHING_TYPE_FULL_TIME]);
+
 export { propTypes };

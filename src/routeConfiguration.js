@@ -15,6 +15,7 @@ const AuthenticationPage = loadable(() => import(/* webpackChunkName: "Authentic
 const CheckoutPage = loadable(() => import(/* webpackChunkName: "CheckoutPage" */ './containers/CheckoutPage/CheckoutPage'));
 const ContactDetailsPage = loadable(() => import(/* webpackChunkName: "ContactDetailsPage" */ './containers/ContactDetailsPage/ContactDetailsPage'));
 const EditListingPage = loadable(() => import(/* webpackChunkName: "EditListingPage" */ './containers/EditListingPage/EditListingPage'));
+const TeacherListingPage = loadable(() => import(/* webpackChunkName: "TeacherListingPage" */ './containers/TeacherListingPage/TeacherListingPage'));
 const EmailVerificationPage = loadable(() => import(/* webpackChunkName: "EmailVerificationPage" */ './containers/EmailVerificationPage/EmailVerificationPage'));
 const InboxPage = loadable(() => import(/* webpackChunkName: "InboxPage" */ './containers/InboxPage/InboxPage'));
 const LandingPage = loadable(() => import(/* webpackChunkName: "LandingPage" */ './containers/LandingPage/LandingPage'));
@@ -112,6 +113,43 @@ const routeConfiguration = () => {
       ),
     },
     {
+      path: '/lt',
+      name: 'ListingBasePage',
+      component: RedirectToLandingPage,
+    },
+    {
+      path: '/lt/:slug/:id',
+      name: 'ListingPage',
+      component: ListingPage,
+      loadData: pageDataLoadingAPI.ListingPage.loadData,
+    },
+    {
+      path: '/lt/:slug/:id/checkout',
+      name: 'CheckoutPage',
+      auth: true,
+      component: CheckoutPage,
+      setInitialValues: pageDataLoadingAPI.CheckoutPage.setInitialValues,
+    },
+    {
+      path: '/lt/:slug/:id/:variant',
+      name: 'ListingPageVariant',
+      auth: true,
+      authPage: 'LoginPage',
+      component: ListingPage,
+      loadData: pageDataLoadingAPI.ListingPage.loadData,
+    },
+    {
+      path: '/lt/new',
+      name: 'NewTeacherListingPage',
+      auth: true,
+      component: () => (
+        <NamedRedirect
+          name="TeacherListingPage"
+          params={{ slug: draftSlug, id: draftId, type: 'new', tab: 'general' }}
+        />
+      ),
+    },
+    {
       path: '/l/:slug/:id/:type/:tab',
       name: 'EditListingPage',
       auth: true,
@@ -125,11 +163,31 @@ const routeConfiguration = () => {
       component: EditListingPage,
       loadData: pageDataLoadingAPI.EditListingPage.loadData,
     },
+    {
+      path: '/lt/:slug/:id/:type/:tab',
+      name: 'TeacherListingPage',
+      auth: true,
+      component: TeacherListingPage,
+      loadData: pageDataLoadingAPI.TeacherListingPage.loadData,
+    },
+    {
+      path: '/lt/:slug/:id/:type/:tab/:returnURLType',
+      name: 'EditTeacherListingStripeOnboardingPage',
+      auth: true,
+      component: TeacherListingPage,
+      loadData: pageDataLoadingAPI.TeacherListingPage.loadData,
+    },
 
     // Canonical path should be after the `/l/new` path since they
     // conflict and `new` is not a valid listing UUID.
     {
       path: '/l/:id',
+      name: 'ListingPageCanonical',
+      component: ListingPage,
+      loadData: pageDataLoadingAPI.ListingPage.loadData,
+    },
+    {
+      path: '/lt/:id',
       name: 'ListingPageCanonical',
       component: ListingPage,
       loadData: pageDataLoadingAPI.ListingPage.loadData,

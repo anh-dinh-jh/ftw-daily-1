@@ -37,7 +37,7 @@ export const TeacherListingPricingFormComponent = props => (
       const isDaily = unitType === LINE_ITEM_DAY;
 
       const translationKey = isNightly
-        ? 'TeacherListingPricingForm.pricePerNight'
+        ? 'TeacherListingPricingForm.pricePerHour'
         : isDaily
         ? 'TeacherListingPricingForm.pricePerDay'
         : 'TeacherListingPricingForm.pricePerUnit';

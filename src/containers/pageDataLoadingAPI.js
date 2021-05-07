@@ -16,7 +16,7 @@ import {
   loadData as TransactionPageLoader,
   setInitialValues as TransactionPageInitialValues,
 } from './TransactionPage/TransactionPage.duck';
-import { loadData as TeacherListingPageLoader } from './TeacherListingPage/TeacherListingPage.duck';
+import { loadData as EditTeacherListingPageLoader } from './EditTeacherListingPage/EditTeacherListingPage.duck';
 
 const getPageDataLoadingAPI = () => {
   return {
@@ -57,8 +57,8 @@ const getPageDataLoadingAPI = () => {
       loadData: TransactionPageLoader,
       setInitialValues: TransactionPageInitialValues,
     },
-    TeacherListingPage: {
-      loadData: TeacherListingPageLoader,
+    EditTeacherListingPage: {
+      loadData: EditTeacherListingPageLoader,
     },
   };
 };

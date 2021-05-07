@@ -18,7 +18,7 @@ import ProfileSettingsPage from './ProfileSettingsPage/ProfileSettingsPage.duck'
 import SearchPage from './SearchPage/SearchPage.duck';
 import StripePayoutPage from './StripePayoutPage/StripePayoutPage.duck';
 import TransactionPage from './TransactionPage/TransactionPage.duck';
-import TeacherListingPage from './TeacherListingPage/TeacherListingPage.duck';
+import EditTeacherListingPage from './EditTeacherListingPage/EditTeacherListingPage.duck';
 
 export {
   CheckoutPage,
@@ -36,5 +36,5 @@ export {
   SearchPage,
   StripePayoutPage,
   TransactionPage,
-  TeacherListingPage
+  EditTeacherListingPage
 };

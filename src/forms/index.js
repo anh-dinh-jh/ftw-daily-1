@@ -8,11 +8,11 @@ export { default as EditListingLocationForm } from './EditListingLocationForm/Ed
 export { default as EditListingPhotosForm } from './EditListingPhotosForm/EditListingPhotosForm';
 export { default as EditListingPoliciesForm } from './EditListingPoliciesForm/EditListingPoliciesForm';
 export { default as EditListingPricingForm } from './EditListingPricingForm/EditListingPricingForm';
-export { default as TeacherListingAvailabilityForm } from './TeacherListingAvailabilityForm/TeacherListingAvailabilityForm';
-export { default as TeacherListingGeneralForm } from './TeacherListingGeneralForm/TeacherListingGeneralForm';
-export { default as TeacherListingLocationForm } from './TeacherListingLocationForm/TeacherListingLocationForm';
-export { default as TeacherListingPhotosForm } from './TeacherListingPhotosForm/TeacherListingPhotosForm';
-export { default as TeacherListingPricingForm } from './TeacherListingPricingForm/TeacherListingPricingForm';
+export { default as EditTeacherListingAvailabilityForm } from './EditTeacherListingAvailabilityForm/EditTeacherListingAvailabilityForm';
+export { default as EditTeacherListingGeneralForm } from './EditTeacherListingGeneralForm/EditTeacherListingGeneralForm';
+export { default as EditTeacherListingLocationForm } from './EditTeacherListingLocationForm/EditTeacherListingLocationForm';
+export { default as EditTeacherListingPhotosForm } from './EditTeacherListingPhotosForm/EditTeacherListingPhotosForm';
+export { default as EditTeacherListingPricingForm } from './EditTeacherListingPricingForm/EditTeacherListingPricingForm';
 export { default as EmailVerificationForm } from './EmailVerificationForm/EmailVerificationForm';
 export { default as EnquiryForm } from './EnquiryForm/EnquiryForm';
 export { default as FilterForm } from './FilterForm/FilterForm';

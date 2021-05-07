@@ -15,7 +15,7 @@ const AuthenticationPage = loadable(() => import(/* webpackChunkName: "Authentic
 const CheckoutPage = loadable(() => import(/* webpackChunkName: "CheckoutPage" */ './containers/CheckoutPage/CheckoutPage'));
 const ContactDetailsPage = loadable(() => import(/* webpackChunkName: "ContactDetailsPage" */ './containers/ContactDetailsPage/ContactDetailsPage'));
 const EditListingPage = loadable(() => import(/* webpackChunkName: "EditListingPage" */ './containers/EditListingPage/EditListingPage'));
-const TeacherListingPage = loadable(() => import(/* webpackChunkName: "TeacherListingPage" */ './containers/TeacherListingPage/TeacherListingPage'));
+const EditTeacherListingPage = loadable(() => import(/* webpackChunkName: "TeacherListingPage" */ './containers/EditTeacherListingPage/EditTeacherListingPage'));
 const EmailVerificationPage = loadable(() => import(/* webpackChunkName: "EmailVerificationPage" */ './containers/EmailVerificationPage/EmailVerificationPage'));
 const InboxPage = loadable(() => import(/* webpackChunkName: "InboxPage" */ './containers/InboxPage/InboxPage'));
 const LandingPage = loadable(() => import(/* webpackChunkName: "LandingPage" */ './containers/LandingPage/LandingPage'));
@@ -144,7 +144,7 @@ const routeConfiguration = () => {
       auth: true,
       component: () => (
         <NamedRedirect
-          name="TeacherListingPage"
+          name="EditTeacherListingPage"
           params={{ slug: draftSlug, id: draftId, type: 'new', tab: 'general' }}
         />
       ),
@@ -165,17 +165,17 @@ const routeConfiguration = () => {
     },
     {
       path: '/lt/:slug/:id/:type/:tab',
-      name: 'TeacherListingPage',
+      name: 'EditTeacherListingPage',
       auth: true,
-      component: TeacherListingPage,
-      loadData: pageDataLoadingAPI.TeacherListingPage.loadData,
+      component: EditTeacherListingPage,
+      loadData: pageDataLoadingAPI.EditTeacherListingPage.loadData,
     },
     {
       path: '/lt/:slug/:id/:type/:tab/:returnURLType',
       name: 'EditTeacherListingStripeOnboardingPage',
       auth: true,
-      component: TeacherListingPage,
-      loadData: pageDataLoadingAPI.TeacherListingPage.loadData,
+      component: EditTeacherListingPage,
+      loadData: pageDataLoadingAPI.EditTeacherListingPage.loadData,
     },
 
     // Canonical path should be after the `/l/new` path since they

@@ -28,7 +28,6 @@
 }
 
 .addImageWrapper {
-  float: left;
   position: relative;
   width: 100%;
   margin: 24px 0 0 0;
@@ -159,4 +158,8 @@
     width: 241px;
     margin-top: 100px;
   }
+}
+
+.subtitle {
+  font-size: 32px;
 }

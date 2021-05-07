@@ -503,4 +503,7 @@ export const TEACHING_TYPE_FULL_TIME = 'full-time';
 
 propTypes.teachingType = oneOf([TEACHING_TYPE_PART_TIME, TEACHING_TYPE_FULL_TIME]);
 
+export const PHOTOS_TYPE_MAIN = 'main';
+export const PHOTOS_TYPE_OTHERS = 'others';
+
 export { propTypes };

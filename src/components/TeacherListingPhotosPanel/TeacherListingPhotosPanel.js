@@ -2,10 +2,11 @@ import React, { Component } from 'react';
 import { array, bool, func, object, string } from 'prop-types';
 import { FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
-import { LISTING_STATE_DRAFT } from '../../util/types';
+import { LISTING_STATE_DRAFT, PHOTOS_TYPE_MAIN } from '../../util/types';
 import { TeacherListingPhotosForm } from '../../forms';
 import { ensureOwnListing } from '../../util/data';
 import { ListingLink } from '../../components';
+import { getImgType } from '../../util/misc';
 
 import css from './TeacherListingPhotosPanel.module.css';
 
@@ -32,7 +33,6 @@ class TeacherListingPhotosPanel extends Component {
     const rootClass = rootClassName || css.root;
     const classes = classNames(rootClass, className);
     const currentListing = ensureOwnListing(listing);
-
     const isPublished =
       currentListing.id && currentListing.attributes.state !== LISTING_STATE_DRAFT;
     const panelTitle = isPublished ? (
@@ -55,9 +55,25 @@ class TeacherListingPhotosPanel extends Component {
           initialValues={{ images }}
           images={images}
           onImageUpload={onImageUpload}
+          listing={listing}
           onSubmit={values => {
             const { addImage, ...updateValues } = values;
-            onSubmit(updateValues);
+            const { mainPhotos = [], otherPhotos = [] } = listing.attributes.publicData;
+
+            updateValues.images.forEach(img => {
+                if (img.imageId) {
+                  if (getImgType(img.id) === PHOTOS_TYPE_MAIN) {
+                    mainPhotos.push(img.imageId.uuid);
+                  }
+                  else otherPhotos.push(img.imageId.uuid);
+                }
+              }
+            );
+            
+            onSubmit({
+              ...updateValues,
+              publicData: { mainPhotos, otherPhotos }
+            });
           }}
           onChange={onChange}
           onUpdateImageOrder={onUpdateImageOrder}

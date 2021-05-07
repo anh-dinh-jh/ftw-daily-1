@@ -111,7 +111,7 @@ export const EditTeacherListingPageComponent = props => {
 
     const redirectProps = isPendingApproval
       ? {
-          name: 'ListingPageVariant',
+          name: 'TeacherListingPageVariant',
           params: {
             id: listingId.uuid,
             slug: listingSlug,
@@ -119,7 +119,7 @@ export const EditTeacherListingPageComponent = props => {
           },
         }
       : {
-          name: 'ListingPage',
+          name: 'TeacherListingPage',
           params: {
             id: listingId.uuid,
             slug: listingSlug,

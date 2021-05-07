@@ -15,11 +15,12 @@ const AuthenticationPage = loadable(() => import(/* webpackChunkName: "Authentic
 const CheckoutPage = loadable(() => import(/* webpackChunkName: "CheckoutPage" */ './containers/CheckoutPage/CheckoutPage'));
 const ContactDetailsPage = loadable(() => import(/* webpackChunkName: "ContactDetailsPage" */ './containers/ContactDetailsPage/ContactDetailsPage'));
 const EditListingPage = loadable(() => import(/* webpackChunkName: "EditListingPage" */ './containers/EditListingPage/EditListingPage'));
-const EditTeacherListingPage = loadable(() => import(/* webpackChunkName: "TeacherListingPage" */ './containers/EditTeacherListingPage/EditTeacherListingPage'));
+const EditTeacherListingPage = loadable(() => import(/* webpackChunkName: "EditTeacherListingPage" */ './containers/EditTeacherListingPage/EditTeacherListingPage'));
 const EmailVerificationPage = loadable(() => import(/* webpackChunkName: "EmailVerificationPage" */ './containers/EmailVerificationPage/EmailVerificationPage'));
 const InboxPage = loadable(() => import(/* webpackChunkName: "InboxPage" */ './containers/InboxPage/InboxPage'));
 const LandingPage = loadable(() => import(/* webpackChunkName: "LandingPage" */ './containers/LandingPage/LandingPage'));
 const ListingPage = loadable(() => import(/* webpackChunkName: "ListingPage" */ /* webpackPrefetch: true */ './containers/ListingPage/ListingPage'));
+const TeacherListingPage = loadable(() => import(/* webpackChunkName: "ListingPage" */ /* webpackPrefetch: true */ './containers/TeacherListingPage/TeacherListingPage'));
 const ManageListingsPage = loadable(() => import(/* webpackChunkName: "ManageListingsPage" */ './containers/ManageListingsPage/ManageListingsPage'));
 const PasswordChangePage = loadable(() => import(/* webpackChunkName: "PasswordChangePage" */ './containers/PasswordChangePage/PasswordChangePage'));
 const PasswordRecoveryPage = loadable(() => import(/* webpackChunkName: "PasswordRecoveryPage" */ './containers/PasswordRecoveryPage/PasswordRecoveryPage'));
@@ -119,9 +120,9 @@ const routeConfiguration = () => {
     },
     {
       path: '/lt/:slug/:id',
-      name: 'ListingPage',
-      component: ListingPage,
-      loadData: pageDataLoadingAPI.ListingPage.loadData,
+      name: 'TeacherListingPage',
+      component: TeacherListingPage,
+      loadData: pageDataLoadingAPI.TeacherListingPage.loadData,
     },
     {
       path: '/lt/:slug/:id/checkout',
@@ -132,11 +133,11 @@ const routeConfiguration = () => {
     },
     {
       path: '/lt/:slug/:id/:variant',
-      name: 'ListingPageVariant',
+      name: 'TeacherListingPageVariant',
       auth: true,
       authPage: 'LoginPage',
-      component: ListingPage,
-      loadData: pageDataLoadingAPI.ListingPage.loadData,
+      component: TeacherListingPage,
+      loadData: pageDataLoadingAPI.TeacherListingPage.loadData,
     },
     {
       path: '/lt/new',
@@ -189,8 +190,8 @@ const routeConfiguration = () => {
     {
       path: '/lt/:id',
       name: 'ListingPageCanonical',
-      component: ListingPage,
-      loadData: pageDataLoadingAPI.ListingPage.loadData,
+      component: TeacherListingPage,
+      loadData: pageDataLoadingAPI.TeacherListingPage.loadData,
     },
     {
       path: '/u',

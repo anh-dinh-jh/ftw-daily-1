@@ -150,7 +150,7 @@ export const filters = [
     group: 'secondary',
     queryParamNames: ['pub_subjects'],
     config: {
-      searchMode: 'has_all',
+      searchMode: 'has_any',
       options: [
         {
           key: 'maths',
@@ -174,7 +174,7 @@ export const filters = [
     group: 'secondary',
     queryParamNames: ['pub_levels'],
     config: {
-      searchMode: 'has_all',
+      searchMode: 'has_any',
       options: [
         {
           key: 'beginner',

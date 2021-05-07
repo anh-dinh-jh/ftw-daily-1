@@ -126,7 +126,7 @@ const EditTeacherListingGeneralFormComponent = props => (
 
           <FieldSelect           
             id='teaching-type'
-            name='teachingTypes'
+            name='teachingType'
             className={css.category}
             label={teachingTypesLabel}
             validate={composeValidators(required(titleRequiredMessage))}
@@ -141,7 +141,7 @@ const EditTeacherListingGeneralFormComponent = props => (
 
           <FormSpy subscription={{ values: true }}>
             {({ values }) => {
-                  if (values.teachingTypes) {
+                  if (values.teachingType) {
                     return (
                       <FieldTextInput
                       id='teaching-hours'
@@ -149,10 +149,10 @@ const EditTeacherListingGeneralFormComponent = props => (
                       className={css.description}
                       type='number'
                       label={teachingHoursLabel}
-                      defaultValue={values.teachingTypes === TEACHING_TYPE_PART_TIME ? 1 : 8}
+                      defaultValue={values.teachingType === TEACHING_TYPE_PART_TIME ? 1 : 8}
                       max='8'
                       min='1'
-                      disabled={values.teachingTypes !== TEACHING_TYPE_PART_TIME}
+                      disabled={values.teachingType !== TEACHING_TYPE_PART_TIME}
                       validate={composeValidators(required(titleRequiredMessage))}
                     />
                     )

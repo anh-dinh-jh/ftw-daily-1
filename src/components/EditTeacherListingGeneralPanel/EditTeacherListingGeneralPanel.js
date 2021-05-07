@@ -52,11 +52,11 @@ const EditTeacherListingGeneralPanel = props => {
         initialValues={{ title, description, levels: publicData.levels, subjects: publicData.subjects }}
         saveActionMsg={submitButtonText}
         onSubmit={values => {
-          const { title, description, levels, subjects, teachingTypes, teachingHours } = values;
+          const { title, description, levels, subjects, teachingType, teachingHours } = values;
           const updateValues = {
             title: title.trim(),
             description,
-            publicData: { levels, subjects, teachingTypes, teachingHours},
+            publicData: { levels, subjects, teachingType, teachingHours },
           };
 
           onSubmit(updateValues);

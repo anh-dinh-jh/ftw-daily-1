@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { FormattedMessage } from '../../util/reactIntl';
 import { ensureOwnListing } from '../../util/data';
 import { findOptionsForSelectFilter } from '../../util/search';
-import { LISTING_STATE_DRAFT } from '../../util/types';
+import { LISTING_TYPE_TEACHER, LISTING_STATE_DRAFT } from '../../util/types';
 import { ListingLink } from '..';
 import { EditTeacherListingGeneralForm } from '../../forms';
 import config from '../../config';
@@ -56,7 +56,7 @@ const EditTeacherListingGeneralPanel = props => {
           const updateValues = {
             title: title.trim(),
             description,
-            publicData: { levels, subjects, teachingType, teachingHours },
+            publicData: { levels, subjects, teachingType, teachingHours, listingType: LISTING_TYPE_TEACHER },
           };
 
           onSubmit(updateValues);

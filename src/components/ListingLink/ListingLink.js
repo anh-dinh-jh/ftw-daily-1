@@ -9,7 +9,7 @@
 import React from 'react';
 import { string, oneOfType, node } from 'prop-types';
 import { richText } from '../../util/richText';
-import { LISTING_STATE_DRAFT, LISTING_STATE_PENDING_APPROVAL, propTypes } from '../../util/types';
+import { LISTING_STATE_DRAFT, LISTING_STATE_PENDING_APPROVAL, LISTING_TYPE_DEFAULT, propTypes } from '../../util/types';
 import {
   LISTING_PAGE_DRAFT_VARIANT,
   LISTING_PAGE_PENDING_APPROVAL_VARIANT,
@@ -28,6 +28,7 @@ const ListingLink = props => {
     return null;
   }
   const id = listing.id.uuid;
+  const { listingType = LISTING_TYPE_DEFAULT } = listing.attributes.publicData;
   const { title, state } = listing.attributes;
   const slug = createSlug(title);
   const richTitle = (
@@ -48,7 +49,7 @@ const ListingLink = props => {
     : null;
   const linkProps = !!variant
     ? {
-        name: 'ListingPageVariant',
+        name: `${listingType}Variant`,
         params: {
           id,
           slug,
@@ -56,7 +57,7 @@ const ListingLink = props => {
         },
       }
     : {
-        name: 'ListingPage',
+        name: `${listingType}Page`,
         params: { id, slug },
       };
   return (

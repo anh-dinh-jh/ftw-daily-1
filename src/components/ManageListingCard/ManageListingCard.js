@@ -11,6 +11,7 @@ import {
   LISTING_STATE_PENDING_APPROVAL,
   LISTING_STATE_CLOSED,
   LISTING_STATE_DRAFT,
+  LISTING_TYPE_DEFAULT,
   propTypes,
 } from '../../util/types';
 import { formatMoney } from '../../util/currency';
@@ -43,18 +44,18 @@ import css from './ManageListingCard.module.css';
 const MENU_CONTENT_OFFSET = -12;
 const MAX_LENGTH_FOR_WORDS_IN_TITLE = 7;
 
-const priceData = (price, intl) => {
+const priceData = (price, intl, listingType) => {
   if (price && price.currency === config.currency) {
     const formattedPrice = formatMoney(intl, price);
     return { formattedPrice, priceTitle: formattedPrice };
   } else if (price) {
     return {
       formattedPrice: intl.formatMessage(
-        { id: 'ManageListingCard.unsupportedPrice' },
+        { id: `Manage${listingType}Card.unsupportedPrice` },
         { currency: price.currency }
       ),
       priceTitle: intl.formatMessage(
-        { id: 'ManageListingCard.unsupportedPriceTitle' },
+        { id: `Manage${listingType}Card.unsupportedPriceTitle` },
         { currency: price.currency }
       ),
     };
@@ -65,6 +66,7 @@ const priceData = (price, intl) => {
 const createListingURL = (routes, listing) => {
   const id = listing.id.uuid;
   const slug = createSlug(listing.attributes.title);
+  const { listingType = LISTING_TYPE_DEFAULT } = listing.attributes.publicData;
   const isPendingApproval = listing.attributes.state === LISTING_STATE_PENDING_APPROVAL;
   const isDraft = listing.attributes.state === LISTING_STATE_DRAFT;
   const variant = isDraft
@@ -76,7 +78,7 @@ const createListingURL = (routes, listing) => {
   const linkProps =
     isPendingApproval || isDraft
       ? {
-          name: 'ListingPageVariant',
+          name: `${listingType}PageVariant`,
           params: {
             id,
             slug,
@@ -84,7 +86,7 @@ const createListingURL = (routes, listing) => {
           },
         }
       : {
-          name: 'ListingPage',
+          name: `${listingType}Page`,
           params: { id, slug },
         };
 
@@ -130,6 +132,7 @@ export const ManageListingCardComponent = props => {
   const id = currentListing.id.uuid;
   const { title = '', price, state } = currentListing.attributes;
   const slug = createSlug(title);
+  const { listingType = LISTING_PAGE_TYPE_DEFAULT } = listing.attributes.publicData;
   const isPendingApproval = state === LISTING_STATE_PENDING_APPROVAL;
   const isClosed = state === LISTING_STATE_CLOSED;
   const isDraft = state === LISTING_STATE_DRAFT;
@@ -140,7 +143,9 @@ export const ManageListingCardComponent = props => {
     [css.menuItemDisabled]: !!actionsInProgressListingId,
   });
 
-  const { formattedPrice, priceTitle } = priceData(price, intl);
+  console.log(currentListing.attributes);
+
+  const { formattedPrice, priceTitle } = priceData(price, intl, listingType);
 
   const hasError = hasOpeningError || hasClosingError;
   const thisListingInProgress =
@@ -148,7 +153,7 @@ export const ManageListingCardComponent = props => {
 
   const onOverListingLink = () => {
     // Enforce preloading of ListingPage (loadable component)
-    const { component: Page } = findRouteByRouteName('ListingPage', routeConfiguration());
+    const { component: Page } = findRouteByRouteName(`${listingType}Page`, routeConfiguration());
     // Loadable Component has a "preload" function.
     if (Page.preload) {
       Page.preload();
@@ -169,10 +174,10 @@ export const ManageListingCardComponent = props => {
   const isDaily = unitType === LINE_ITEM_DAY;
 
   const unitTranslationKey = isNightly
-    ? 'ManageListingCard.perNight'
+    ? `Manage${listingType}Card.perNight`
     : isDaily
-    ? 'ManageListingCard.perDay'
-    : 'ManageListingCard.perUnit';
+    ? `Manage${listingType}Card.perDay`
+    : `Manage${listingType}Card.perUnit`;
 
   return (
     <div className={classes}>
@@ -205,7 +210,7 @@ export const ManageListingCardComponent = props => {
         <div className={classNames(css.menuOverlayWrapper, { [css.menuOverlayOpen]: isMenuOpen })}>
           <div className={classNames(css.menuOverlay)} />
           <div className={css.menuOverlayContent}>
-            <FormattedMessage id="ManageListingCard.viewListing" />
+            <FormattedMessage id={`Manage${listingType}Card.viewListing`} />
           </div>
         </div>
         <div className={css.menubarWrapper}>
@@ -240,7 +245,7 @@ export const ManageListingCardComponent = props => {
                       }
                     }}
                   >
-                    <FormattedMessage id="ManageListingCard.closeListing" />
+                    <FormattedMessage id={`Manage${listingType}Card.closeListing`} />
                   </InlineTextButton>
                 </MenuItem>
               </MenuContent>
@@ -252,16 +257,16 @@ export const ManageListingCardComponent = props => {
             <div className={classNames({ [css.draftNoImage]: !firstImage })} />
             <Overlay
               message={intl.formatMessage(
-                { id: 'ManageListingCard.draftOverlayText' },
+                { id: `Manage${listingType}Card.draftOverlayText` },
                 { listingTitle: title }
               )}
             >
               <NamedLink
                 className={css.finishListingDraftLink}
-                name="EditListingPage"
+                name={`Edit${listingType}Page`}
                 params={{ id, slug, type: LISTING_PAGE_PARAM_TYPE_DRAFT, tab: 'photos' }}
               >
-                <FormattedMessage id="ManageListingCard.finishListingDraft" />
+                <FormattedMessage id={`Manage${listingType}Card.finishListingDraft`} />
               </NamedLink>
             </Overlay>
           </React.Fragment>
@@ -269,7 +274,7 @@ export const ManageListingCardComponent = props => {
         {isClosed ? (
           <Overlay
             message={intl.formatMessage(
-              { id: 'ManageListingCard.closedListing' },
+              { id: `Manage${listingType}Card.closedListing` },
               { listingTitle: title }
             )}
           >
@@ -284,14 +289,14 @@ export const ManageListingCardComponent = props => {
                 }
               }}
             >
-              <FormattedMessage id="ManageListingCard.openListing" />
+              <FormattedMessage id={`Manage${listingType}Card.openListing`} />
             </button>
           </Overlay>
         ) : null}
         {isPendingApproval ? (
           <Overlay
             message={intl.formatMessage(
-              { id: 'ManageListingCard.pendingApproval' },
+              { id: `Manage${listingType}Card.pendingApproval` },
               { listingTitle: title }
             )}
           />
@@ -301,7 +306,7 @@ export const ManageListingCardComponent = props => {
             <IconSpinner />
           </Overlay>
         ) : hasError ? (
-          <Overlay errorMessage={intl.formatMessage({ id: 'ManageListingCard.actionFailed' })} />
+          <Overlay errorMessage={intl.formatMessage({ id: `Manage${listingType}Card.actionFailed` })} />
         ) : null}
       </div>
 
@@ -318,7 +323,7 @@ export const ManageListingCardComponent = props => {
             </React.Fragment>
           ) : (
             <div className={css.noPrice}>
-              <FormattedMessage id="ManageListingCard.priceNotSet" />
+              <FormattedMessage id={`Manage${listingType}Card.priceNotSet`} />
             </div>
           )}
         </div>
@@ -341,10 +346,10 @@ export const ManageListingCardComponent = props => {
         <div className={css.manageLinks}>
           <NamedLink
             className={css.manageLink}
-            name="EditListingPage"
+            name={`Edit${listingType}Page`}
             params={{ id, slug, type: editListingLinkType, tab: 'description' }}
           >
-            <FormattedMessage id="ManageListingCard.editListing" />
+            <FormattedMessage id={`Manage${listingType}Card.editListing`} />
           </NamedLink>
 
           {availabilityEnabled ? (
@@ -353,10 +358,10 @@ export const ManageListingCardComponent = props => {
 
               <NamedLink
                 className={css.manageLink}
-                name="EditListingPage"
+                name={`Edit${listingType}Page`}
                 params={{ id, slug, type: editListingLinkType, tab: 'availability' }}
               >
-                <FormattedMessage id="ManageListingCard.manageAvailability" />
+                <FormattedMessage id={`Manage${listingType}Card.manageAvailability`} />
               </NamedLink>
             </React.Fragment>
           ) : null}

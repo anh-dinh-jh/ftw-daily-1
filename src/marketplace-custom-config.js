@@ -194,7 +194,7 @@ export const filters = [
   {
     id: 'teaching-type',
     label: 'Teaching Type',
-    type: 'SelectMultipleFilter',
+    type: 'SelectSingleFilter',
     group: 'secondary',
     queryParamNames: ['pub_teaching-type'],
     config: {

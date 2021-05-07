@@ -61,7 +61,8 @@ export class EditTeacherListingPhotosFormComponent extends Component {
             saveActionMsg,
             updated,
             updateInProgress,
-            listing,
+            mainPhotos,
+            otherPhotos
           } = formRenderProps;
 
           const chooseImageText = (
@@ -128,8 +129,6 @@ export class EditTeacherListingPhotosFormComponent extends Component {
             invalid || disabled || submitInProgress || imageUploadRequested || ready;
 
           const classes = classNames(css.root, className);
-
-          const { mainPhotos = [], otherPhotos = [] } = listing.attributes.publicData;
 
           const getMainPhotos = () => {
             const uploadedMainPhotos = images.filter(img => {
@@ -330,7 +329,6 @@ EditTeacherListingPhotosFormComponent.propTypes = {
     updateListingError: propTypes.error,
   }),
   images: array,
-  listing: object,
   intl: intlShape.isRequired,
   onImageUpload: func.isRequired,
   onUpdateImageOrder: func.isRequired,

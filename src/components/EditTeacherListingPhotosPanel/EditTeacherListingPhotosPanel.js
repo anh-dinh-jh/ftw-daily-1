@@ -35,6 +35,7 @@ class EditTeacherListingPhotosPanel extends Component {
     const currentListing = ensureOwnListing(listing);
     const isPublished =
       currentListing.id && currentListing.attributes.state !== LISTING_STATE_DRAFT;
+    const { mainPhotos = [], otherPhotos = [] } = currentListing.attributes.publicData;
     const panelTitle = isPublished ? (
       <FormattedMessage
         id="EditTeacherListingPhotosPanel.title"
@@ -55,10 +56,10 @@ class EditTeacherListingPhotosPanel extends Component {
           initialValues={{ images }}
           images={images}
           onImageUpload={onImageUpload}
-          listing={listing}
+          mainPhotos={mainPhotos}
+          otherPhotos={otherPhotos}
           onSubmit={values => {
             const { addImage, ...updateValues } = values;
-            const { mainPhotos = [], otherPhotos = [] } = listing.attributes.publicData;
 
             updateValues.images.forEach(img => {
                 if (img.imageId) {

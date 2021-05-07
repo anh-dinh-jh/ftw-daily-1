@@ -129,7 +129,8 @@ const EditTeacherListingGeneralFormComponent = props => (
             name='teachingTypes'
             className={css.category}
             label={teachingTypesLabel}
-            >
+            validate={composeValidators(required(titleRequiredMessage))}
+          >
             <option disabled value="">
               {teachingTypePlaceholder}
             </option>

@@ -39,11 +39,13 @@ export class EditTeacherListingAvailabilityFormComponent extends Component {
               <FormattedMessage id="EditTeacherListingAvailabilityForm.updateFailed" />
             </p>
           ) : null;
-
+          const isFullyUnavailable = availability.calendar && Object.values(availability.calendar).every(period => {
+            return (period.exceptions.length === 0);
+          });
           const classes = classNames(rootClassName || css.root, className);
           const submitReady = (updated && pristine) || ready;
           const submitInProgress = updateInProgress;
-          const submitDisabled = invalid || disabled || submitInProgress;
+          const submitDisabled = invalid || disabled || submitInProgress || isFullyUnavailable;
           return (
             <Form className={classes} onSubmit={handleSubmit}>
               {errorMessage}

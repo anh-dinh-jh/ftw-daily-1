@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
-import TeacherListingPhotosForm from './EditTeacherListingPhotosForm';
+import EditTeacherListingPhotosForm from './EditTeacherListingPhotosForm';
 
 export const Empty = {
-  component: TeacherListingPhotosForm,
+  component: EditTeacherListingPhotosForm,
   props: {
     initialValues: { country: 'US', images: [] },
     stripeConnected: false,
@@ -10,7 +10,7 @@ export const Empty = {
       console.log(`onImageUpload with id (${values.id}) and file name (${values.file.name})`);
     },
     onSubmit: values => {
-      console.log('Submit TeacherListingPhotosForm with (unformatted) values:', values);
+      console.log('Submit EditTeacherListingPhotosForm with (unformatted) values:', values);
     },
     saveActionMsg: 'Save photos',
     updated: false,

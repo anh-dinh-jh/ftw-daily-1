@@ -1,11 +1,11 @@
 /* eslint-disable no-console */
-import TeacherListingLocationForm from './EditTeacherListingLocationForm';
+import EditTeacherListingLocationForm from './EditTeacherListingLocationForm';
 
 export const Empty = {
-  component: TeacherListingLocationForm,
+  component: EditTeacherListingLocationForm,
   props: {
     onSubmit: values => {
-      console.log('Submit TeacherListingLocationForm with (unformatted) values:', values);
+      console.log('Submit EditTeacherListingLocationForm with (unformatted) values:', values);
     },
     saveActionMsg: 'Save location',
     updated: false,

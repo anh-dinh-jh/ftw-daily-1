@@ -2,14 +2,14 @@
 import React from 'react';
 import { renderShallow } from '../../util/test-helpers';
 import { fakeIntl } from '../../util/test-data';
-import { TeacherListingAvailabilityFormComponent } from './TeacherListingAvailabilityForm';
+import { EditTeacherListingAvailabilityFormComponent } from './EditTeacherListingAvailabilityForm';
 
 const noop = () => null;
 
 describe('TeacherListingAvailabilityForm', () => {
   it('matches snapshot', () => {
     const tree = renderShallow(
-      <TeacherListingAvailabilityFormComponent
+      <EditTeacherListingAvailabilityFormComponent
         intl={fakeIntl}
         dispatch={noop}
         onSubmit={v => v}

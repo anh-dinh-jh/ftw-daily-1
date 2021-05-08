@@ -296,7 +296,7 @@
   "EditTeacherListingLocationPanel.title": "Edit the location of {listingTitle}",
   "EditTeacherListingPage.loadingListingData": "Loading listing data…",
   "EditTeacherListingPage.titleCreateListing": "Create a listing",
-  "EditTeacherListingPage.titleTeacherListing": "Edit listing",
+  "EditTeacherListingPage.titleEditListing": "Edit listing",
   "EditTeacherListingPhotosForm.addImagesTip": "Tip: Choose photos of your face with clear background, avoid blurs as much as possible",
   "EditTeacherListingPhotosForm.bankAccountNumberRequired": "You need to add a bank account number.",
   "EditTeacherListingPhotosForm.chooseImage": "+ Choose an image…",

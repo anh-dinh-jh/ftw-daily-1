@@ -1,11 +1,11 @@
 import React from 'react';
 import { arrayOf, bool, func, shape, string } from 'prop-types';
 import { compose } from 'redux';
-import { Form as FinalForm, FormSpy } from 'react-final-form';
+import { Form as FinalForm, FormSpy, Field } from 'react-final-form';
 import { intlShape, injectIntl, FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
 import arrayMutators from 'final-form-arrays';
-import { propTypes, TEACHING_TYPE_PART_TIME } from '../../util/types';
+import { propTypes, TEACHING_TYPE_PART_TIME, TEACHING_TYPE_FULL_TIME } from '../../util/types';
 import { maxLength, required, composeValidators } from '../../util/validators';
 import { Form, Button, FieldTextInput, FieldCheckboxGroup, FieldSelect } from '../../components';
 
@@ -26,6 +26,7 @@ const EditTeacherListingGeneralFormComponent = props => (
         disabled,
         ready,
         handleSubmit,
+        form,
         intl,
         invalid,
         pristine,
@@ -33,6 +34,7 @@ const EditTeacherListingGeneralFormComponent = props => (
         updated,
         updateInProgress,
         fetchErrors,
+        values,
       } = formRenderProps;
 
       const titleMessage = intl.formatMessage({ id: 'EditTeacherListingGeneralForm.title' });
@@ -124,42 +126,40 @@ const EditTeacherListingGeneralFormComponent = props => (
         
           <FieldCheckboxGroup className={css.checkboxes} id='levels' name='levels' label="Levels" options={levelOptions} />
 
-          <FieldSelect           
+          <FieldTextInput
+            id='teaching-hours'
+            name='teachingHours'
+            className={css.description}
+            type='number'
+            label={teachingHoursLabel}
+            max='8'
+            min='1'
+            onChange={(e) => {
+              const hours = e.target.value;
+              if (Number(hours) >= 8) {
+                form.change('teachingHours', 8);
+                form.change('teachingType', TEACHING_TYPE_FULL_TIME);
+                return;
+              }
+              
+              form.change('teachingHours', Number(hours) <= 0 ? 1 : hours);
+              form.change('teachingType', TEACHING_TYPE_PART_TIME);
+            }}
+            validate={composeValidators(required(titleRequiredMessage))}
+          />
+
+          <FieldSelect         
             id='teaching-type'
             name='teachingType'
             className={css.category}
             label={teachingTypesLabel}
+            disabled
             validate={composeValidators(required(titleRequiredMessage))}
           >
-            <option disabled value="">
-              {teachingTypePlaceholder}
-            </option>
-            {teachingTypeOptions.map(t => (
-              <option key={t.key} value={t.key}>{t.label}</option>
-            ))}
+              {teachingTypeOptions.map(t => (
+                <option key={t.key} value={t.key}>{t.label}</option>
+              ))}
           </FieldSelect>
-
-          <FormSpy subscription={{ values: true }}>
-            {({ values }) => {
-                  if (values.teachingType) {
-                    return (
-                      <FieldTextInput
-                      id='teaching-hours'
-                      name='teachingHours'
-                      className={css.description}
-                      type='number'
-                      label={teachingHoursLabel}
-                      defaultValue={values.teachingType === TEACHING_TYPE_PART_TIME ? 1 : 8}
-                      max='8'
-                      min='1'
-                      disabled={values.teachingType !== TEACHING_TYPE_PART_TIME}
-                      validate={composeValidators(required(titleRequiredMessage))}
-                    />
-                    )
-                  } else return null;
-                }
-              } 
-          </FormSpy>
 
           <Button
             className={css.submitButton}

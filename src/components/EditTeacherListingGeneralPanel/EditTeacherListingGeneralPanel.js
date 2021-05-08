@@ -4,7 +4,7 @@ import classNames from 'classnames';
 import { FormattedMessage } from '../../util/reactIntl';
 import { ensureOwnListing } from '../../util/data';
 import { findOptionsForSelectFilter } from '../../util/search';
-import { LISTING_TYPE_TEACHER, LISTING_STATE_DRAFT } from '../../util/types';
+import { LISTING_TYPE_TEACHER, LISTING_STATE_DRAFT, TEACHING_TYPE_PART_TIME } from '../../util/types';
 import { ListingLink } from '..';
 import { EditTeacherListingGeneralForm } from '../../forms';
 import config from '../../config';
@@ -49,7 +49,7 @@ const EditTeacherListingGeneralPanel = props => {
       <h1 className={css.title}>{panelTitle}</h1>
       <EditTeacherListingGeneralForm
         className={css.form}
-        initialValues={{ title, description, levels: publicData.levels, subjects: publicData.subjects }}
+        initialValues={{ title, description, levels: publicData.levels, subjects: publicData.subjects, teachingType: publicData.teachingType || TEACHING_TYPE_PART_TIME, teachingHours: publicData.teachingHours || 1 }}
         saveActionMsg={submitButtonText}
         onSubmit={values => {
           const { title, description, levels, subjects, teachingType, teachingHours } = values;

@@ -130,18 +130,17 @@ export class EditTeacherListingPhotosFormComponent extends Component {
 
           const classes = classNames(css.root, className);
 
-          const getMainPhotos = () => {
-            const uploadedMainPhotos = images.filter(img => {
-                return (typeof img.id === 'string') && getImgType(img.id) === PHOTOS_TYPE_MAIN
+          const getMainPhoto = () => {
+            const uploadedMainPhoto = images.filter(img => {
+                return (typeof img.id === 'string') && getImgType(img.id) === PHOTOS_TYPE_MAIN;
             })
             
-            const publishedMainPhotos = images.filter(img => {
+            const publishedMainPhoto = images.filter(img => {
               if (!img.imageId) {
                 return mainPhotos.indexOf(img.id.uuid) > -1;
               }
             });
-
-            return [...publishedMainPhotos, ...uploadedMainPhotos];
+            return [...publishedMainPhoto, ...uploadedMainPhoto];
           }
 
           const getOtherPhotos = () => {
@@ -156,9 +155,6 @@ export class EditTeacherListingPhotosFormComponent extends Component {
             });
             
             return [...publishedSubPhotos, ...uploadedSubPhotos];
-
-            
-            
           }
 
           return (
@@ -174,11 +170,11 @@ export class EditTeacherListingPhotosFormComponent extends Component {
                   <FormattedMessage id="EditTeacherListingPhotosForm.updateFailed" />
                 </p>
               ) : null}
-
+              
               <h2 className={css.subtitle}>Main photos</h2>
               <AddImages
                 className={css.imagesField}
-                images={getMainPhotos()}
+                images={getMainPhoto()}
                 thumbnailClassName={css.thumbnail}
                 savedImageAltText={intl.formatMessage({
                   id: 'EditTeacherListingPhotosForm.savedImageAltText',
@@ -204,7 +200,7 @@ export class EditTeacherListingPhotosFormComponent extends Component {
                       onImageUploadHandler(file, PHOTOS_TYPE_MAIN);
                     };
                     const inputProps = { accept, id: name, name, onChange, type };
-                    return (
+                    return getMainPhoto().length < 1 && (
                       <div className={css.addImageWrapper}>
                         <div className={css.aspectRatioWrapper}>
                           {fieldDisabled ? null : (
@@ -235,69 +231,69 @@ export class EditTeacherListingPhotosFormComponent extends Component {
                 />
               </AddImages>
               
-              { (mainPhotos.length > 0 || images.length > 0) &&
-                (
+              { images.length >= 1 && (
                 <>
-                <h2 className={css.subtitle}>Other photos</h2>
-                <AddImages
-                  className={css.imagesField}
-                  images={getOtherPhotos()}
-                  thumbnailClassName={css.thumbnail}
-                  savedImageAltText={intl.formatMessage({
-                    id: 'EditTeacherListingPhotosForm.savedImageAltText',
-                  })}
-                  onRemoveImage={onRemoveImage}
-                >
-                  <Field
-                    id="addOtherImage"
-                    name="addOtherImage"
-                    accept={ACCEPT_IMAGES}
-                    form={null}
-                    label={chooseImageText}
-                    type="file"
-                    disabled={imageUploadRequested}
+                  <h2 className={css.subtitle}>Other photos</h2>
+                  <AddImages
+                    className={css.imagesField}
+                    images={getOtherPhotos()}
+                    thumbnailClassName={css.thumbnail}
+                    savedImageAltText={intl.formatMessage({
+                      id: 'EditTeacherListingPhotosForm.savedImageAltText',
+                    })}
+                    onRemoveImage={onRemoveImage}
                   >
-                    {fieldprops => {
-                      const { accept, input, label, disabled: fieldDisabled } = fieldprops;
-                      const { name, type } = input;
-                      const onChange = e => {
-                        const file = e.target.files[0];
-                        form.change(`addOtherImage`, file);
-                        form.blur(`addOtherImage`);
-                        onImageUploadHandler(file, PHOTOS_TYPE_OTHERS);
-                      };
-                      const inputProps = { accept, id: name, name, onChange, type };
-                      return (
-                        <div className={css.addImageWrapper}>
-                          <div className={css.aspectRatioWrapper}>
-                            {fieldDisabled ? null : (
-                              <input {...inputProps} className={css.addImageInput} />
-                            )}
-                            <label htmlFor={name} className={css.addImage}>
-                              {label}
-                            </label>
+                    <Field
+                      id="addOtherImage"
+                      name="addOtherImage"
+                      accept={ACCEPT_IMAGES}
+                      form={null}
+                      label={chooseImageText}
+                      type="file"
+                      disabled={imageUploadRequested}
+                    >
+                      {fieldprops => {
+                        const { accept, input, label, disabled: fieldDisabled } = fieldprops;
+                        const { name, type } = input;
+                        const onChange = e => {
+                          const file = e.target.files[0];
+                          form.change(`addOtherImage`, file);
+                          form.blur(`addOtherImage`);
+                          onImageUploadHandler(file, PHOTOS_TYPE_OTHERS);
+                        };
+                        const inputProps = { accept, id: name, name, onChange, type };
+                        return (
+                          <div className={css.addImageWrapper}>
+                            <div className={css.aspectRatioWrapper}>
+                              {fieldDisabled ? null : (
+                                <input {...inputProps} className={css.addImageInput} />
+                              )}
+                              <label htmlFor={name} className={css.addImage}>
+                                {label}
+                              </label>
+                            </div>
                           </div>
-                        </div>
-                      );
-                    }}
-                  </Field>
+                        );
+                      }}
+                    </Field>
 
-                  <Field
-                    component={props => {
-                      const { input, meta } = props;
-                      return (
-                        <div className={css.imageRequiredWrapper}>
-                          <input {...input} />
-                          <ValidationError fieldMeta={meta} />
-                        </div>
-                      );
-                    }}
-                    name="images"
-                    type="hidden"
-                    validate={composeValidators(nonEmptyArray(imageRequiredMessage))}
-                  />
-                </AddImages>
-                </>)
+                    <Field
+                      component={props => {
+                        const { input, meta } = props;
+                        return (
+                          <div className={css.imageRequiredWrapper}>
+                            <input {...input} />
+                            <ValidationError fieldMeta={meta} />
+                          </div>
+                        );
+                      }}
+                      name="images"
+                      type="hidden"
+                      validate={composeValidators(nonEmptyArray(imageRequiredMessage))}
+                    /> 
+                  </AddImages>
+                </>
+                )
               }
               {uploadImageFailed}
 

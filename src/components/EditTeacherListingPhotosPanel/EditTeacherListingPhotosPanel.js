@@ -60,19 +60,24 @@ class EditTeacherListingPhotosPanel extends Component {
           otherPhotos={otherPhotos}
           onSubmit={values => {
             const { addImage, ...updateValues } = values;
-
+            const newImages = [];
             updateValues.images.forEach(img => {
                 if (img.imageId) {
                   if (getImgType(img.id) === PHOTOS_TYPE_MAIN) {
                     mainPhotos.push(img.imageId.uuid);
+                    newImages.unshift(img);
                   }
-                  else otherPhotos.push(img.imageId.uuid);
+                  else {
+                    otherPhotos.push(img.imageId.uuid);
+                    newImages.push(img);
+                  }
                 }
+                else newImages.push(img);
               }
             );
-            
+
             onSubmit({
-              ...updateValues,
+              images: newImages,
               publicData: { mainPhotos, otherPhotos }
             });
           }}

@@ -132,7 +132,7 @@ export const ManageListingCardComponent = props => {
   const id = currentListing.id.uuid;
   const { title = '', price, state } = currentListing.attributes;
   const slug = createSlug(title);
-  const { listingType = LISTING_PAGE_TYPE_DEFAULT } = listing.attributes.publicData;
+  const { listingType = LISTING_TYPE_DEFAULT } = listing.attributes.publicData;
   const isPendingApproval = state === LISTING_STATE_PENDING_APPROVAL;
   const isClosed = state === LISTING_STATE_CLOSED;
   const isDraft = state === LISTING_STATE_DRAFT;

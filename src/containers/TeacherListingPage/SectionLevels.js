@@ -1,19 +1,21 @@
 import React from 'react';
 import { FormattedMessage } from '../../util/reactIntl';
-
+import { PropertyGroup } from '../../components';
 import css from './TeacherListingPage.module.css';
 
 const SectionLevels = props => {
-  const { levels } = props;
+  const { options, levels } = props;
   return levels ? (
     <div className={css.sectionDescription}>
       <h2 className={css.descriptionTitle}>
         <FormattedMessage id="TeacherListingPage.levelsTitle" />
       </h2>
-      {levels.map((level, index) => 
-      (<p key={index} className={css.description}>
-        {level}
-      </p>))}
+      <PropertyGroup
+        id="TeacherListingPage.levels"
+        options={options}
+        selectedOptions={levels}
+        twoColumns={true}
+      />
     </div>
   ) : null;
 };

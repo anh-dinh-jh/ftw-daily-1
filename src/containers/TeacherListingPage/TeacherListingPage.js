@@ -386,8 +386,8 @@ export class TeacherListingPageComponent extends Component {
   const subjectOptions = findOptionsForSelectFilter('subjects', filterConfig);
   const levelOptions = findOptionsForSelectFilter('levels', filterConfig);
   const teachingTypesOptions = findOptionsForSelectFilter('teaching-type', filterConfig);
-  const subjects = listLabels(subjectOptions, publicData.subjects);
-  const levels = listLabels(levelOptions, publicData.levels);
+  const subjects = publicData.subjects;
+  const levels = publicData.levels;
   const teachingType = listLabel(teachingTypesOptions, publicData.teachingType);
   const { teachingHours } = publicData;
   return (

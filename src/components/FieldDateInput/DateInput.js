@@ -175,7 +175,7 @@ class DateInputComponent extends Component {
       ? day => !timeSlots.find(timeSlot => timeSlotEqualsDay(timeSlot, day))
       : () => false;
 
-    const placeholder = placeholderText || intl.formatMessage({ id: 'FieldDateInput.placeholder' });
+    const placeholder = placeholderText || intl.formatMessage({ id: 'FieldDateInput.placeholderText' });
 
     const screenReaderInputText =
       screenReaderInputMessage ||

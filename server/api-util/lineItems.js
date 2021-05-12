@@ -6,6 +6,10 @@ const { Money } = types;
 // line-item/night, line-item/day or line-item/units
 const bookingUnitType = 'line-item/night';
 const PROVIDER_COMMISSION_PERCENTAGE = -10;
+const TEACHER_PROVIDER_COMMISSION_PERCENTAGE = -25;
+const CUSTOMER_COMMISSION_PERCENTAGE = 0;
+const TEACHER_CUSTOMER_COMMISSION_PERCENTAGE_NEW_USER = 15;
+const TEACHER_CUSTOMER_COMMISSION_PERCENTAGE_EXISTING_USER = 55;
 
 /** Returns collection of lineItems (max 50)
  *
@@ -29,8 +33,9 @@ const PROVIDER_COMMISSION_PERCENTAGE = -10;
  */
 exports.transactionLineItems = (listing, bookingData) => {
   const unitPrice = listing.attributes.price;
-  const { startDate, endDate } = bookingData;
-
+  const { startDate, endDate, isAnyBookingMadeBefore } = bookingData;
+  const publicData = listing.attributes.publicData;
+  const sessionHours = publicData && publicData.sessionHours;
   /**
    * If you want to use pre-defined component and translations for printing the lineItems base price for booking,
    * you should use one of the codes:
@@ -41,7 +46,13 @@ exports.transactionLineItems = (listing, bookingData) => {
    *
    * By default BookingBreakdown prints line items inside LineItemUnknownItemsMaybe if the lineItem code is not recognized. */
 
-  const booking = {
+  const booking = sessionHours ? {
+    code: 'line-item/hours',
+    unitPrice,
+    quantity: sessionHours,
+    includeFor: ['customer', 'provider']
+  }  
+  : {
     code: bookingUnitType,
     unitPrice,
     quantity: calculateQuantityFromDates(startDate, endDate, bookingUnitType),
@@ -51,11 +62,18 @@ exports.transactionLineItems = (listing, bookingData) => {
   const providerCommission = {
     code: 'line-item/provider-commission',
     unitPrice: calculateTotalFromLineItems([booking]),
-    percentage: PROVIDER_COMMISSION_PERCENTAGE,
+    percentage: sessionHours ? TEACHER_PROVIDER_COMMISSION_PERCENTAGE : PROVIDER_COMMISSION_PERCENTAGE,
     includeFor: ['provider'],
   };
 
-  const lineItems = [booking, providerCommission];
+  const customerCommission = {
+    code: 'line-item/customer-commission',
+    unitPrice: calculateTotalFromLineItems([booking]),
+    percentage: sessionHours ? (isAnyBookingMadeBefore ? TEACHER_CUSTOMER_COMMISSION_PERCENTAGE_EXISTING_USER : TEACHER_CUSTOMER_COMMISSION_PERCENTAGE_NEW_USER) : CUSTOMER_COMMISSION_PERCENTAGE,
+    includeFor: ['customer'],
+  };
+
+  const lineItems = [booking, providerCommission, customerCommission];
 
   return lineItems;
 };

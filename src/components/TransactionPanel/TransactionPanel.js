@@ -13,7 +13,7 @@ import {
   txIsRequested,
   txHasBeenDelivered,
 } from '../../util/transaction';
-import { LINE_ITEM_NIGHT, LINE_ITEM_DAY, propTypes } from '../../util/types';
+import { LINE_ITEM_NIGHT, LINE_ITEM_DAY, LINE_ITEM_HOURS, propTypes} from '../../util/types';
 import {
   ensureListing,
   ensureTransaction,
@@ -51,6 +51,7 @@ import PanelHeading, {
 } from './PanelHeading';
 
 import css from './TransactionPanel.module.css';
+import { checkHourlyBooking } from '../../util/misc';
 
 // Helper function to get display names for different roles
 const displayNames = (currentUser, currentProvider, currentCustomer, intl) => {
@@ -286,16 +287,16 @@ export class TransactionPanelComponent extends Component {
     const listingTitle = currentListing.attributes.deleted
       ? deletedListingTitle
       : currentListing.attributes.title;
-
-    const unitType = config.bookingUnitType;
+    const isHourlyBooking = checkHourlyBooking(publicData);
+    const unitType = isHourlyBooking ? LINE_ITEM_HOURS : config.bookingUnitType;
     const isNightly = unitType === LINE_ITEM_NIGHT;
     const isDaily = unitType === LINE_ITEM_DAY;
-
-    const unitTranslationKey = isNightly
+    const unitTranslationKey = isHourlyBooking ? 'TransactionPanel.perHour' 
+    : (isNightly
       ? 'TransactionPanel.perNight'
       : isDaily
       ? 'TransactionPanel.perDay'
-      : 'TransactionPanel.perUnit';
+      : 'TransactionPanel.perUnit');
 
     const price = currentListing.attributes.price;
     const bookingSubTitle = price
@@ -373,7 +374,7 @@ export class TransactionPanelComponent extends Component {
                 geolocation={geolocation}
                 showAddress={stateData.showAddress}
               />
-              <BreakdownMaybe transaction={currentTransaction} transactionRole={transactionRole} />
+              <BreakdownMaybe transaction={currentTransaction} transactionRole={transactionRole} unitType={unitType}/>
             </div>
 
             {savePaymentMethodFailed ? (
@@ -458,6 +459,7 @@ export class TransactionPanelComponent extends Component {
                 className={css.breakdownContainer}
                 transaction={currentTransaction}
                 transactionRole={transactionRole}
+                unitType={unitType}
               />
 
               {stateData.showSaleButtons ? (

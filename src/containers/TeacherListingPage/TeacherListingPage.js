@@ -37,7 +37,7 @@ import {
   LayoutWrapperMain,
   LayoutWrapperFooter,
   Footer,
-  BookingPanel,
+  TeacherBookingPanel,
 } from '../../components';
 import { TopbarContainer, NotFoundPage } from '..';
 
@@ -77,11 +77,6 @@ const listLabel = (list, key) => {
 
 };
 
-const listLabels = (list, keys) => {
-  const labels = keys.map(k => listLabel(list, k));
-  return labels;
-}
-
 export class TeacherListingPageComponent extends Component {
   constructor(props) {
     super(props);
@@ -104,15 +99,15 @@ export class TeacherListingPageComponent extends Component {
       params,
       callSetInitialValues,
       onInitializeCardPaymentData,
+      transactions
     } = this.props;
     const listingId = new UUID(params.id);
     const listing = getListing(listingId);
-
+    
     const { bookingDates, ...bookingData } = values;
-
     const initialValues = {
       listing,
-      bookingData,
+      bookingData: { isAnyBookingMadeBefore: transactions && transactions.length > 0 },
       bookingDates: {
         bookingStart: bookingDates.startDate,
         bookingEnd: bookingDates.endDate,
@@ -124,8 +119,7 @@ export class TeacherListingPageComponent extends Component {
 
     const routes = routeConfiguration();
     // Customize checkout page state with current listing and selected bookingDates
-    const { setInitialValues } = findRouteByRouteName('CheckoutPage', routes);
-
+    const { setInitialValues } = findRouteByRouteName('TeacherCheckoutPage', routes);
     callSetInitialValues(setInitialValues, initialValues, saveToSessionStorage);
 
     // Clear previous Stripe errors from store if there is any
@@ -134,7 +128,7 @@ export class TeacherListingPageComponent extends Component {
     // Redirect to CheckoutPage
     history.push(
       createResourceLocatorString(
-        'CheckoutPage',
+        'TeacherCheckoutPage',
         routes,
         { id: listing.id.uuid, slug: createSlug(listing.attributes.title) },
         {}
@@ -203,8 +197,8 @@ export class TeacherListingPageComponent extends Component {
       lineItems,
       fetchLineItemsInProgress,
       fetchLineItemsError,
+      transactions
     } = this.props;
-
     const listingId = new UUID(rawParams.id);
     const isPendingApprovalVariant = rawParams.variant === LISTING_PAGE_PENDING_APPROVAL_VARIANT;
     const isDraftVariant = rawParams.variant === LISTING_PAGE_DRAFT_VARIANT;
@@ -383,13 +377,17 @@ export class TeacherListingPageComponent extends Component {
       </NamedLink>
     );
 
+  // All options for information display
   const subjectOptions = findOptionsForSelectFilter('subjects', filterConfig);
   const levelOptions = findOptionsForSelectFilter('levels', filterConfig);
   const teachingTypesOptions = findOptionsForSelectFilter('teaching-type', filterConfig);
   const subjects = publicData.subjects;
   const levels = publicData.levels;
   const teachingType = listLabel(teachingTypesOptions, publicData.teachingType);
-  const { teachingHours } = publicData;
+  const { sessionHours } = publicData;
+
+  // Check if the user has made a booking before
+  const isAnyBookingMadeBefore = transactions && transactions.length > 0;
   return (
       <Page
         title={schemaTitle}
@@ -438,9 +436,9 @@ export class TeacherListingPageComponent extends Component {
                     onContactUser={this.onContactUser}
                   />
                   <SectionGeneralMaybe description={description} />
-                  <SectionSubjects subjects={subjects} />
-                  <SectionTeachingType teachingType={teachingType} teachingHours={teachingHours} />
-                  <SectionLevels levels={levels} />
+                  <SectionSubjects options={subjectOptions} subjects={subjects} />
+                  <SectionTeachingType teachingType={teachingType} teachingHours={sessionHours} />
+                  <SectionLevels options={levelOptions} levels={levels} />
                   <SectionMapMaybe
                     geolocation={geolocation}
                     publicData={publicData}
@@ -461,7 +459,7 @@ export class TeacherListingPageComponent extends Component {
                     onManageDisableScrolling={onManageDisableScrolling}
                   />
                 </div>
-                <BookingPanel
+                <TeacherBookingPanel
                   className={css.bookingPanel}
                   listing={currentListing}
                   isOwnListing={isOwnListing}
@@ -477,6 +475,7 @@ export class TeacherListingPageComponent extends Component {
                   lineItems={lineItems}
                   fetchLineItemsInProgress={fetchLineItemsInProgress}
                   fetchLineItemsError={fetchLineItemsError}
+                  isAnyBookingMadeBefore={isAnyBookingMadeBefore}
                 />
               </div>
             </div>
@@ -503,6 +502,7 @@ TeacherListingPageComponent.defaultProps = {
   filterConfig: config.custom.filters,
   lineItems: null,
   fetchLineItemsError: null,
+  transactions: null
 };
 
 TeacherListingPageComponent.propTypes = {
@@ -546,6 +546,7 @@ TeacherListingPageComponent.propTypes = {
   lineItems: array,
   fetchLineItemsInProgress: bool.isRequired,
   fetchLineItemsError: propTypes.error,
+  transactions: array
 };
 
 const mapStateToProps = state => {
@@ -562,9 +563,9 @@ const mapStateToProps = state => {
     fetchLineItemsInProgress,
     fetchLineItemsError,
     enquiryModalOpenForListingId,
+    transactions
   } = state.TeacherListingPage;
   const { currentUser } = state.user;
-
   const getListing = id => {
     const ref = { id, type: 'listing' };
     const listings = getMarketplaceEntities(state, [ref]);
@@ -578,6 +579,7 @@ const mapStateToProps = state => {
   };
 
   return {
+    transactions,
     isAuthenticated,
     currentUser,
     getListing,

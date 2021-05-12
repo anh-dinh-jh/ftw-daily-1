@@ -14,7 +14,7 @@ import {
   txIsPaymentExpired,
   txIsPaymentPending,
 } from '../../util/transaction';
-import { propTypes, DATE_TYPE_DATE } from '../../util/types';
+import { propTypes, DATE_TYPE_DATE, DATE_TYPE_DATETIME, LINE_ITEM_HOURS } from '../../util/types';
 import { ensureCurrentUser } from '../../util/data';
 import { getMarketplaceEntities } from '../../ducks/marketplaceData.duck';
 import { isScrollingDisabled } from '../../ducks/UI.duck';
@@ -39,6 +39,7 @@ import { TopbarContainer, NotFoundPage } from '../../containers';
 import config from '../../config';
 
 import css from './InboxPage.module.css';
+import { checkHourlyBooking } from '../../util/misc';
 
 const formatDate = (intl, date) => {
   return {
@@ -156,11 +157,13 @@ export const txState = (intl, tx, type) => {
 const BookingInfoMaybe = props => {
   const { bookingClassName, isOrder, intl, tx, unitType } = props;
   const isEnquiry = txIsEnquired(tx);
-
   if (isEnquiry) {
     return null;
   }
 
+  const isHourlyBooking = checkHourlyBooking(tx.listing.attributes.publicData);
+  const newUnitType = isHourlyBooking ? LINE_ITEM_HOURS : unitType;
+  const newDateType = isHourlyBooking ? DATE_TYPE_DATETIME : DATE_TYPE_DATE;
   // If you want to show the booking price after the booking time on InboxPage you can
   // add the price after the BookingTimeInfo component. You can get the price by uncommenting
   // sthe following lines:
@@ -170,7 +173,6 @@ const BookingInfoMaybe = props => {
 
   // Remember to also add formatMoney function from 'util/currency.js' and add this after BookingTimeInfo:
   // <div className={css.itemPrice}>{price}</div>
-
   return (
     <div className={classNames(css.bookingInfoWrapper, bookingClassName)}>
       <BookingTimeInfo
@@ -178,8 +180,8 @@ const BookingInfoMaybe = props => {
         isOrder={isOrder}
         intl={intl}
         tx={tx}
-        unitType={unitType}
-        dateType={DATE_TYPE_DATE}
+        unitType={newUnitType}
+        dateType={newDateType}
       />
     </div>
   );
@@ -285,7 +287,7 @@ export const InboxPageComponent = props => {
   const toTxItem = tx => {
     const type = isOrders ? 'order' : 'sale';
     const stateData = txState(intl, tx, type);
-
+    
     // Render InboxItem only if the latest transition of the transaction is handled in the `txState` function.
     return stateData ? (
       <li key={tx.id.uuid} className={css.listItem}>

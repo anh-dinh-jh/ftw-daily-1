@@ -13,6 +13,7 @@ import { ModalInMobile, Button } from '../../components';
 import { BookingDatesForm } from '../../forms';
 
 import css from './BookingPanel.module.css';
+import { checkHourlyBooking } from '../../util/misc';
 
 // This defines when ModalInMobile shows content as Modal
 const MODAL_BREAKPOINT = 1023;
@@ -68,9 +69,10 @@ const BookingPanel = props => {
     onFetchTransactionLineItems,
     lineItems,
     fetchLineItemsInProgress,
-    fetchLineItemsError,
+    fetchLineItemsError
   } = props;
 
+  const { sessionHours } = listing.attributes.publicData;
   const price = listing.attributes.price;
   const hasListingState = !!listing.attributes.state;
   const isClosed = hasListingState && listing.attributes.state === LISTING_STATE_CLOSED;
@@ -87,6 +89,7 @@ const BookingPanel = props => {
 
   const isNightly = unitType === LINE_ITEM_NIGHT;
   const isDaily = unitType === LINE_ITEM_DAY;
+  const isHourlyBooking = checkHourlyBooking(listing.attributes.publicData);
 
   const unitTranslationKey = isNightly
     ? 'BookingPanel.perNight'
@@ -134,6 +137,8 @@ const BookingPanel = props => {
             lineItems={lineItems}
             fetchLineItemsInProgress={fetchLineItemsInProgress}
             fetchLineItemsError={fetchLineItemsError}
+            isHourlyBooking={isHourlyBooking}
+            sessionHours={sessionHours}
           />
         ) : null}
       </ModalInMobile>

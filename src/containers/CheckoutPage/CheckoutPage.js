@@ -8,7 +8,7 @@ import classNames from 'classnames';
 import config from '../../config';
 import routeConfiguration from '../../routeConfiguration';
 import { pathByRouteName, findRouteByRouteName } from '../../util/routes';
-import { propTypes, LINE_ITEM_NIGHT, LINE_ITEM_DAY, DATE_TYPE_DATE } from '../../util/types';
+import { propTypes, LINE_ITEM_NIGHT, LINE_ITEM_DAY, LINE_ITEM_HOURLY, DATE_TYPE_DATE, LISTING_TYPE_DEFAULT, LISTING_TYPES_USE_DATETIME_FORM, DATE_TYPE_DATETIME, LINE_ITEM_HOURS } from '../../util/types';
 import {
   ensureListing,
   ensureCurrentUser,
@@ -34,6 +34,7 @@ import { TRANSITION_ENQUIRE, txIsPaymentPending, txIsPaymentExpired } from '../.
 import {
   AvatarMedium,
   BookingBreakdown,
+  HourlyBookingBreakdown,
   Logo,
   NamedLink,
   NamedRedirect,
@@ -52,9 +53,11 @@ import {
   stripeCustomer,
   confirmPayment,
   sendMessage,
+  fetchTransactions
 } from './CheckoutPage.duck';
 import { storeData, storedData, clearData } from './CheckoutPageSessionHelpers';
 import css from './CheckoutPage.module.css';
+import { checkHourlyBooking } from '../../util/misc';
 
 const STORAGE_KEY = 'CheckoutPage';
 
@@ -178,17 +181,15 @@ export class CheckoutPageComponent extends Component {
       pageData.bookingDates.bookingStart &&
       pageData.bookingDates.bookingEnd &&
       !isBookingCreated;
-
     if (shouldFetchSpeculatedTransaction) {
       const listingId = pageData.listing.id;
       const transactionId = tx ? tx.id : null;
       const { bookingStart, bookingEnd } = pageData.bookingDates;
-
+      const { isAnyBookingMadeBefore = false } = pageData.bookingData;
       // Convert picked date to date that will be converted on the API as
       // a noon of correct year-month-date combo in UTC
       const bookingStartForAPI = dateFromLocalToAPI(bookingStart);
       const bookingEndForAPI = dateFromLocalToAPI(bookingEnd);
-
       // Fetch speculated transaction for showing price in booking breakdown
       // NOTE: if unit type is line-item/units, quantity needs to be added.
       // The way to pass it to checkout page is through pageData.bookingData
@@ -197,6 +198,9 @@ export class CheckoutPageComponent extends Component {
           listingId,
           bookingStart: bookingStartForAPI,
           bookingEnd: bookingEndForAPI,
+          bookingDisplayStart: bookingStart,
+          bookingDisplayEnd: bookingEnd,
+          isAnyBookingMadeBefore,
         },
         transactionId
       );
@@ -223,8 +227,8 @@ export class CheckoutPageComponent extends Component {
       selectedPaymentMethod,
       saveAfterOnetimePayment,
     } = handlePaymentParams;
+    const { isAnyBookingMadeBefore } = pageData.bookingData;
     const storedTx = ensureTransaction(pageData.transaction);
-
     const ensuredCurrentUser = ensureCurrentUser(currentUser);
     const ensuredStripeCustomer = ensureStripeCustomer(ensuredCurrentUser.stripeCustomer);
     const ensuredDefaultPaymentMethod = ensurePaymentMethodCard(
@@ -379,6 +383,9 @@ export class CheckoutPageComponent extends Component {
       listingId: pageData.listing.id,
       bookingStart: tx.booking.attributes.start,
       bookingEnd: tx.booking.attributes.end,
+      bookingDisplayStart: tx.booking.attributes.displayStart,
+      bookingDisplayEnd: tx.booking.attributes.displayEnd,
+      isAnyBookingMadeBefore,
       ...optionalPaymentParams,
     };
 
@@ -524,10 +531,10 @@ export class CheckoutPageComponent extends Component {
     const speculatedTransaction = ensureTransaction(speculatedTransactionMaybe, {}, null);
     const currentListing = ensureListing(listing);
     const currentAuthor = ensureUser(currentListing.author);
-
+    const { listingType = LISTING_TYPE_DEFAULT } = currentListing.attributes.publicData;
     const listingTitle = currentListing.attributes.title;
     const title = intl.formatMessage({ id: 'CheckoutPage.title' }, { listingTitle });
-
+    const isHourlyBooking = checkHourlyBooking(currentListing.attributes.publicData);
     const pageProps = { title, scrollingDisabled };
     const topbar = (
       <div className={css.topbar}>
@@ -576,7 +583,7 @@ export class CheckoutPageComponent extends Component {
         bookingDates,
         listing,
       });
-      return <NamedRedirect name="ListingPage" params={params} />;
+      return <NamedRedirect name={`${listingType}Page`} params={params} />;
     }
 
     // Show breakdown only when speculated transaction and booking are loaded
@@ -584,15 +591,23 @@ export class CheckoutPageComponent extends Component {
     const tx = existingTransaction.booking ? existingTransaction : speculatedTransaction;
     const txBooking = ensureBooking(tx.booking);
     const breakdown =
-      tx.id && txBooking.id ? (
-        <BookingBreakdown
+      tx.id && txBooking.id ? ( isHourlyBooking ?
+        (<HourlyBookingBreakdown
+          className={css.bookingBreakdown}
+          userRole="customer"
+          unitType={LINE_ITEM_HOURS}
+          transaction={tx}
+          booking={txBooking}
+          dateType={DATE_TYPE_DATETIME}
+        />) :
+       (<BookingBreakdown
           className={css.bookingBreakdown}
           userRole="customer"
           unitType={config.bookingUnitType}
           transaction={tx}
           booking={txBooking}
           dateType={DATE_TYPE_DATE}
-        />
+        />)
       ) : null;
 
     const isPaymentExpired = checkIsPaymentExpired(existingTransaction);
@@ -619,7 +634,7 @@ export class CheckoutPageComponent extends Component {
 
     const listingLink = (
       <NamedLink
-        name="ListingPage"
+        name={`${listingType}Page`}
         params={{ id: currentListing.id.uuid, slug: createSlug(listingTitle) }}
       >
         <FormattedMessage id="CheckoutPage.errorlistingLinkText" />
@@ -718,11 +733,13 @@ export class CheckoutPageComponent extends Component {
     const isNightly = unitType === LINE_ITEM_NIGHT;
     const isDaily = unitType === LINE_ITEM_DAY;
 
-    const unitTranslationKey = isNightly
+    const unitTranslationKey = isHourlyBooking
+      ? 'CheckoutPage.perHour'
+      : (isNightly
       ? 'CheckoutPage.perNight'
       : isDaily
       ? 'CheckoutPage.perDay'
-      : 'CheckoutPage.perUnit';
+      : 'CheckoutPage.perUnit');
 
     const price = currentListing.attributes.price;
     const formattedPrice = formatMoney(intl, price);

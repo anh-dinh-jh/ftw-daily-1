@@ -7,7 +7,7 @@ import { addMarketplaceEntities } from '../../ducks/marketplaceData.duck';
 import { transactionLineItems } from '../../util/api';
 import * as log from '../../util/log';
 import { denormalisedResponseEntities } from '../../util/data';
-import { TRANSITION_ENQUIRE } from '../../util/transaction';
+import { TRANSITION_ENQUIRE, TRANSITIONS_OF_COMPLETE_BOOKING } from '../../util/transaction';
 import {
   LISTING_PAGE_DRAFT_VARIANT,
   LISTING_PAGE_PENDING_APPROVAL_VARIANT,
@@ -39,6 +39,9 @@ export const SEND_ENQUIRY_REQUEST = 'app/TeacherListingPage/SEND_ENQUIRY_REQUEST
 export const SEND_ENQUIRY_SUCCESS = 'app/TeacherListingPage/SEND_ENQUIRY_SUCCESS';
 export const SEND_ENQUIRY_ERROR = 'app/TeacherListingPage/SEND_ENQUIRY_ERROR';
 
+export const FETCH_TRANSACTIONS_REQUEST = 'app/TeacherListingPage/FETCH_TRANSACTIONS_REQUEST';
+export const FETCH_TRANSACTIONS_SUCCESS = 'app/TeacherListingPage/FETCH_TRANSACTIONS_SUCCESS';
+export const FETCH_TRANSACTIONS_ERROR = 'app/TeacherListingPage/FETCH_TRANSACTIONS_ERROR';
 // ================ Reducer ================ //
 
 const initialState = {
@@ -95,6 +98,13 @@ const TeacherListingPageReducer = (state = initialState, action = {}) => {
     case SEND_ENQUIRY_ERROR:
       return { ...state, sendEnquiryInProgress: false, sendEnquiryError: payload };
 
+    case FETCH_TRANSACTIONS_REQUEST:
+      return { ...state, fetchTransactionsError: null };
+    case FETCH_TRANSACTIONS_SUCCESS:
+      return { ...state, transactions: payload };
+    case FETCH_TRANSACTIONS_ERROR:
+      return { ...state, fetchTransactionsError: payload };
+    
     default:
       return state;
   }
@@ -124,6 +134,14 @@ export const fetchReviewsRequest = () => ({ type: FETCH_REVIEWS_REQUEST });
 export const fetchReviewsSuccess = reviews => ({ type: FETCH_REVIEWS_SUCCESS, payload: reviews });
 export const fetchReviewsError = error => ({
   type: FETCH_REVIEWS_ERROR,
+  error: true,
+  payload: error,
+});
+
+export const fetchTransactionsRequest = () => ({ type: FETCH_TRANSACTIONS_REQUEST });
+export const fetchTransactionsSuccess = reviews => ({ type: FETCH_TRANSACTIONS_SUCCESS, payload: reviews });
+export const fetchTransactionsError = error => ({
+  type: FETCH_TRANSACTIONS_ERROR,
   error: true,
   payload: error,
 });
@@ -220,6 +238,22 @@ const timeSlotsRequest = params => (dispatch, getState, sdk) => {
     return denormalisedResponseEntities(response);
   });
 };
+
+export const fetchTransactions = () => (dispatch, getState, sdk) => {
+  dispatch(fetchTransactionsRequest);
+  return sdk.transactions
+    .query({
+      only: 'order', 
+      lastTransitions: TRANSITIONS_OF_COMPLETE_BOOKING
+    })
+    .then(response => {
+      const transactions = denormalisedResponseEntities(response);
+      dispatch(fetchTransactionsSuccess(transactions));
+    })
+    .catch(e => {
+      dispatch(fetchTransactionsError(storableError(e)));
+    });
+}
 
 export const fetchTimeSlots = listingId => (dispatch, getState, sdk) => {
   dispatch(fetchTimeSlotsRequest);
@@ -325,8 +359,9 @@ export const loadData = (params, search) => dispatch => {
       dispatch(showListing(listingId)),
       dispatch(fetchTimeSlots(listingId)),
       dispatch(fetchReviews(listingId)),
+      dispatch(fetchTransactions())
     ]);
   } else {
-    return Promise.all([dispatch(showListing(listingId)), dispatch(fetchReviews(listingId))]);
+    return Promise.all([dispatch(showListing(listingId)), dispatch(fetchReviews(listingId), dispatch(fetchTransactions()))]);
   }
 };

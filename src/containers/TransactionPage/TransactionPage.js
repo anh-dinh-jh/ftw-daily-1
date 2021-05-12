@@ -7,7 +7,7 @@ import classNames from 'classnames';
 import { FormattedMessage, intlShape, injectIntl } from '../../util/reactIntl';
 import { createResourceLocatorString, findRouteByRouteName } from '../../util/routes';
 import routeConfiguration from '../../routeConfiguration';
-import { propTypes } from '../../util/types';
+import { propTypes, LISTING_TYPES_USE_DATETIME_FORM } from '../../util/types';
 import { ensureListing, ensureTransaction } from '../../util/data';
 import { dateFromAPIToLocalNoon } from '../../util/dates';
 import { createSlug } from '../../util/urlHelpers';

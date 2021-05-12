@@ -24,6 +24,8 @@ const bookingData = (unitType, tx, isOrder, intl) => {
   const { start, end, displayStart, displayEnd } = tx.booking.attributes;
   const startDate = dateFromAPIToLocalNoon(displayStart || start);
   const endDateRaw = dateFromAPIToLocalNoon(displayEnd || end);
+  const displayStartDate = formatDateToText(intl, displayStart);
+  const displayEndDate = formatDateToText(intl, displayEnd);
   const isDaily = unitType === LINE_ITEM_DAY;
   const isNightly = unitType === LINE_ITEM_NIGHT;
   const isUnits = unitType === LINE_ITEM_UNITS;
@@ -37,7 +39,7 @@ const bookingData = (unitType, tx, isOrder, intl) => {
           .toDate()
       : endDateRaw;
   const bookingEnd = formatDateToText(intl, endDate);
-  return { bookingStart, bookingEnd, isSingleDay };
+  return { bookingStart, bookingEnd, displayStartDate, displayEndDate, isSingleDay };
 };
 
 const BookingTimeInfoComponent = props => {
@@ -50,7 +52,7 @@ const BookingTimeInfoComponent = props => {
 
   const bookingTimes = bookingData(unitType, tx, isOrder, intl);
 
-  const { bookingStart, bookingEnd, isSingleDay } = bookingTimes;
+  const { bookingStart, bookingEnd, isSingleDay, displayStartDate, displayEndDate } = bookingTimes;
 
   if (isSingleDay && dateType === DATE_TYPE_DATE) {
     return (
@@ -69,7 +71,7 @@ const BookingTimeInfoComponent = props => {
     return (
       <div className={classNames(css.bookingInfo, bookingClassName)}>
         <span className={css.dateSection}>
-          {`${bookingStart.date}, ${bookingStart.time} - ${bookingEnd.time}`}
+          {`${bookingStart.date}, ${displayStartDate.time} - ${displayEndDate.time}`}
         </span>
       </div>
     );

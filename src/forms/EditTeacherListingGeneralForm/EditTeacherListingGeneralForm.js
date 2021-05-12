@@ -122,13 +122,13 @@ const EditTeacherListingGeneralFormComponent = props => (
             placeholder={descriptionPlaceholderMessage}
             validate={composeValidators(required(descriptionRequiredMessage))}
           />
-          <FieldCheckboxGroup className={css.checkboxes} id='subjects' name='subjects' label="Subjects" options={subjectOptions} />
+          <FieldCheckboxGroup className={css.checkboxes} id='subjects' name='subjects' label="Subjects" options={subjectOptions}/>
         
-          <FieldCheckboxGroup className={css.checkboxes} id='levels' name='levels' label="Levels" options={levelOptions} />
+          <FieldCheckboxGroup className={css.checkboxes} id='levels' name='levels' label="Levels" options={levelOptions}/>
 
           <FieldTextInput
             id='teaching-hours'
-            name='teachingHours'
+            name='sessionHours'
             className={css.description}
             type='number'
             label={teachingHoursLabel}
@@ -137,12 +137,12 @@ const EditTeacherListingGeneralFormComponent = props => (
             onChange={(e) => {
               const hours = e.target.value;
               if (Number(hours) >= 8) {
-                form.change('teachingHours', 8);
+                form.change('sessionHours', 8);
                 form.change('teachingType', TEACHING_TYPE_FULL_TIME);
                 return;
               }
               
-              form.change('teachingHours', Number(hours) <= 0 ? 1 : hours);
+              form.change('sessionHours', Number(hours) <= 0 ? 1 : hours);
               form.change('teachingType', TEACHING_TYPE_PART_TIME);
             }}
             validate={composeValidators(required(titleRequiredMessage))}

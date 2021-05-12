@@ -126,7 +126,7 @@ const routeConfiguration = () => {
     },
     {
       path: '/lt/:slug/:id/checkout',
-      name: 'CheckoutPage',
+      name: 'TeacherCheckoutPage',
       auth: true,
       component: CheckoutPage,
       setInitialValues: pageDataLoadingAPI.CheckoutPage.setInitialValues,

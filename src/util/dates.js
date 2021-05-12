@@ -5,6 +5,8 @@ import moment from 'moment';
  */
 export const START_DATE = 'startDate';
 export const END_DATE = 'endDate';
+export const START_TIME = 8; //08:00
+export const END_TIME = 16;  //16:00
 
 /**
  * Check that the given parameter is a Date object.

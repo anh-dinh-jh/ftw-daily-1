@@ -231,32 +231,33 @@ export class BookingDatesTimeFormComponent extends Component {
                 )}
                 disabled={fetchLineItemsInProgress}
               />
-              <FieldSelect         
-                id='from-time'
-                name='fromTime'
-                className={css.select}
-                label={fromTimeLabel}
-                defaultValue={fromDefaultTime}
-                disabled={!values.bookingDates}
-                onChange={(e) => {
-                  form.change('fromTime', e.target.value);
-                  form.change('toTime', Number(e.target.value) + Number(sessionHours));
-                }}
-              >
-                {timeOptions}
-              </FieldSelect>
-
-              <FieldSelect         
-                id='to-time'
-                name='toTime'
-                className={css.select}
-                label={toTimeLabel}
-                defaultValue={toDefaultTime}
-                disabled={!values.bookingDates}
-              >
-                {getTimeOption(toDefaultTime)}
-              </FieldSelect>
-
+              <div className={css.selectFields}>
+                <FieldSelect         
+                  id='from-time'
+                  name='fromTime'
+                  className={css.select}
+                  label={fromTimeLabel}
+                  defaultValue={fromDefaultTime}
+                  disabled={!values.bookingDates}
+                  onChange={(e) => {
+                    form.change('fromTime', e.target.value);
+                    form.change('toTime', Number(e.target.value) + Number(sessionHours));
+                  }}
+                >
+                  {timeOptions}
+                </FieldSelect>
+                <FieldSelect         
+                  id='to-time'
+                  name='toTime'
+                  className={css.select}
+                  label={toTimeLabel}
+                  defaultValue={toDefaultTime}
+                  disabled={!values.bookingDates}
+                >
+                  {getTimeOption(toDefaultTime)}
+                </FieldSelect>
+              </div>
+                
               {bookingInfoMaybe}
               {loadingSpinnerMaybe}
               {bookingInfoErrorMaybe}

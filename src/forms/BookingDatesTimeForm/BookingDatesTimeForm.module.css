@@ -13,10 +13,18 @@
   z-index: 1;
 }
 
+.selectFields {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
 .select {
-  margin: 0 24px;
+  flex-basis: 100%;
+  margin: 0 12px;
 
   @media (--viewportMedium) {
+    flex-basis: 45%;
     margin: 0;
     margin-bottom: 24px;
   }

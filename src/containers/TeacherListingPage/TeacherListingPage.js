@@ -74,8 +74,16 @@ const priceData = (price, intl) => {
 const listLabel = (list, key) => {
   const l = list.find(item => item.key === key);
   return l ? l.label : key;
-
 };
+
+const checkAnyPreviousBookingHasPromotion = (transactions) => {
+  return transactions && transactions.length > 0 && transactions.filter(transaction => {
+    const unitPriceWithDiscount = transaction.attributes.lineItems[2].unitPrice.amount * (COMISSION_NEW_USER / 100);
+    const lineTotal = transaction.attributes.lineItems[2].lineTotal.amount;
+    const lastTransition = transaction.attributes.lastTransition;
+    return (unitPriceWithDiscount === lineTotal) && (!TRANSITIONS_OF_CANCELED_BOOKING.includes(lastTransition));
+  }).length > 0;
+}
 
 export class TeacherListingPageComponent extends Component {
   constructor(props) {

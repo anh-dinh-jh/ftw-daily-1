@@ -7,6 +7,6 @@ export const getImgType = (imgId) => {
 
 // Check if the current listing is a type of hourly booking
 export const checkHourlyBooking = (publicData) => {
-    const { listingType = LISTING_TYPE_DEFAULT } = publicData;
+    const listingType = publicData && publicData.listingType;
     return LISTING_TYPES_USE_DATETIME_FORM.includes(listingType);
 }

@@ -68,9 +68,9 @@ export class BookingDatesTimeFormComponent extends Component {
         const newBookingDates = this.getStartAndEndTime(date, fromTime, toTime);
         const listingId = this.props.listingId;
         const isOwnListing = this.props.isOwnListing;
-        const isAnyBookingMadeBefore = this.props.isAnyBookingMadeBefore;
+        const isFirstTimeBooking = this.props.isFirstTimeBooking;
         this.props.onFetchTransactionLineItems({
-          bookingData: { ...newBookingDates, isAnyBookingMadeBefore },
+          bookingData: { ...newBookingDates, isFirstTimeBooking },
           listingId,
           isOwnListing,
         });
@@ -79,7 +79,7 @@ export class BookingDatesTimeFormComponent extends Component {
   }
 
   render() {
-    const { rootClassName, className, price: unitPrice, isHourlyBooking, sessionHours, isAnyBookingMadeBefore, ...rest } = this.props;
+    const { rootClassName, className, price: unitPrice, isHourlyBooking, sessionHours, isFirstTimeBooking, ...rest } = this.props;
     const classes = classNames(rootClassName || css.root, className);
 
     if (!unitPrice) {
@@ -297,7 +297,7 @@ BookingDatesTimeFormComponent.defaultProps = {
   fetchLineItemsError: null,
   isHourlyBooking: false,
   sessionHours: null,
-  isAnyBookingMadeBefore: false
+  isFirstTimeBooking: false
 };
 
 BookingDatesTimeFormComponent.propTypes = {

@@ -36,7 +36,6 @@ export const HourlyBookingBreakdownComponent = props => {
     booking,
     intl,
     dateType,
-    isAnyBookingMadeBefore
   } = props;
   const isCustomer = userRole === 'customer';
   const isProvider = userRole === 'provider';

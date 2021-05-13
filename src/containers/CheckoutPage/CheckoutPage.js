@@ -185,7 +185,7 @@ export class CheckoutPageComponent extends Component {
       const listingId = pageData.listing.id;
       const transactionId = tx ? tx.id : null;
       const { bookingStart, bookingEnd } = pageData.bookingDates;
-      const { isAnyBookingMadeBefore = false } = pageData.bookingData;
+      const { isFirstTimeBooking = false } = pageData.bookingData;
       // Convert picked date to date that will be converted on the API as
       // a noon of correct year-month-date combo in UTC
       const bookingStartForAPI = dateFromLocalToAPI(bookingStart);
@@ -200,7 +200,7 @@ export class CheckoutPageComponent extends Component {
           bookingEnd: bookingEndForAPI,
           bookingDisplayStart: bookingStart,
           bookingDisplayEnd: bookingEnd,
-          isAnyBookingMadeBefore,
+          isFirstTimeBooking,
         },
         transactionId
       );
@@ -227,7 +227,7 @@ export class CheckoutPageComponent extends Component {
       selectedPaymentMethod,
       saveAfterOnetimePayment,
     } = handlePaymentParams;
-    const { isAnyBookingMadeBefore } = pageData.bookingData;
+    const { isFirstTimeBooking } = pageData.bookingData;
     const storedTx = ensureTransaction(pageData.transaction);
     const ensuredCurrentUser = ensureCurrentUser(currentUser);
     const ensuredStripeCustomer = ensureStripeCustomer(ensuredCurrentUser.stripeCustomer);
@@ -385,7 +385,7 @@ export class CheckoutPageComponent extends Component {
       bookingEnd: tx.booking.attributes.end,
       bookingDisplayStart: tx.booking.attributes.displayStart,
       bookingDisplayEnd: tx.booking.attributes.displayEnd,
-      isAnyBookingMadeBefore,
+      isFirstTimeBooking,
       ...optionalPaymentParams,
     };
 

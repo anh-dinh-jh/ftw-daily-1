@@ -53,8 +53,10 @@ import SectionSubjects from './SectionSubjects';
 import SectionTeachingType from './SectionTeachingType';
 import SectionMapMaybe from './SectionMapMaybe';
 import css from './TeacherListingPage.module.css';
+import { TRANSITIONS_OF_CANCELED_BOOKING } from '../../util/transaction';
 
 const MIN_LENGTH_FOR_LONG_WORDS_IN_TITLE = 16;
+const COMISSION_NEW_USER = 15;
 
 const { UUID } = sdkTypes;
 
@@ -113,9 +115,10 @@ export class TeacherListingPageComponent extends Component {
     const listing = getListing(listingId);
     
     const { bookingDates, ...bookingData } = values;
+    const isFirstTimeBooking = checkAnyPreviousBookingHasPromotion(transactions);
     const initialValues = {
       listing,
-      bookingData: { isAnyBookingMadeBefore: transactions && transactions.length > 0 },
+      bookingData: { isFirstTimeBooking },
       bookingDates: {
         bookingStart: bookingDates.startDate,
         bookingEnd: bookingDates.endDate,
@@ -395,7 +398,8 @@ export class TeacherListingPageComponent extends Component {
   const { sessionHours } = publicData;
 
   // Check if the user has made a booking before
-  const isAnyBookingMadeBefore = transactions && transactions.length > 0;
+  const isFirstTimeBooking = checkAnyPreviousBookingHasPromotion(transactions);
+
   return (
       <Page
         title={schemaTitle}
@@ -483,7 +487,7 @@ export class TeacherListingPageComponent extends Component {
                   lineItems={lineItems}
                   fetchLineItemsInProgress={fetchLineItemsInProgress}
                   fetchLineItemsError={fetchLineItemsError}
-                  isAnyBookingMadeBefore={isAnyBookingMadeBefore}
+                  isFirstTimeBooking={isFirstTimeBooking}
                 />
               </div>
             </div>

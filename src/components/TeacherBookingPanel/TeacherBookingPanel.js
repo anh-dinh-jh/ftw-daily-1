@@ -70,7 +70,7 @@ const TeacherBookingPanel = props => {
     lineItems,
     fetchLineItemsInProgress,
     fetchLineItemsError,
-    isAnyBookingMadeBefore,
+    isFirstTimeBooking,
   } = props;
 
   const { sessionHours } = listing.attributes.publicData;
@@ -139,7 +139,7 @@ const TeacherBookingPanel = props => {
             fetchLineItemsError={fetchLineItemsError}
             isHourlyBooking={isHourlyBooking}
             sessionHours={Number(sessionHours)}
-            isAnyBookingMadeBefore={isAnyBookingMadeBefore}
+            isFirstTimeBooking={isFirstTimeBooking}
           />
         ) : null}
       </ModalInMobile>
@@ -181,7 +181,7 @@ TeacherBookingPanel.defaultProps = {
   fetchTimeSlotsError: null,
   lineItems: null,
   fetchLineItemsError: null,
-  isAnyBookingMadeBefore: false,
+  isFirstTimeBooking: false,
 };
 
 TeacherBookingPanel.propTypes = {
@@ -202,7 +202,7 @@ TeacherBookingPanel.propTypes = {
   lineItems: array,
   fetchLineItemsInProgress: bool.isRequired,
   fetchLineItemsError: propTypes.error,
-  isAnyBookingMadeBefore: bool,
+  isFirstTimeBooking: bool,
   // from withRouter
   history: shape({
     push: func.isRequired,

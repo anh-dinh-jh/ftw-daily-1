@@ -1,4 +1,4 @@
-const { calculateQuantityFromDates, calculateTotalFromLineItems } = require('./lineItemHelpers');
+const { calculateQuantityFromDates, calculateTotalFromLineItems, getCustomerCommission, getProviderCommission } = require('./lineItemHelpers');
 const { types } = require('sharetribe-flex-sdk');
 const { Money } = types;
 
@@ -7,7 +7,6 @@ const { Money } = types;
 const bookingUnitType = 'line-item/night';
 const PROVIDER_COMMISSION_PERCENTAGE = -10;
 const TEACHER_PROVIDER_COMMISSION_PERCENTAGE = -25;
-const CUSTOMER_COMMISSION_PERCENTAGE = 0;
 const TEACHER_CUSTOMER_COMMISSION_PERCENTAGE_NEW_USER = 15;
 const TEACHER_CUSTOMER_COMMISSION_PERCENTAGE_EXISTING_USER = 55;
 
@@ -33,7 +32,7 @@ const TEACHER_CUSTOMER_COMMISSION_PERCENTAGE_EXISTING_USER = 55;
  */
 exports.transactionLineItems = (listing, bookingData) => {
   const unitPrice = listing.attributes.price;
-  const { startDate, endDate, isAnyBookingMadeBefore } = bookingData;
+  const { startDate, endDate, isFirstTimeBooking } = bookingData;
   const publicData = listing.attributes.publicData;
   const sessionHours = publicData && publicData.sessionHours;
   /**
@@ -59,21 +58,9 @@ exports.transactionLineItems = (listing, bookingData) => {
     includeFor: ['customer', 'provider'],
   };
 
-  const providerCommission = {
-    code: 'line-item/provider-commission',
-    unitPrice: calculateTotalFromLineItems([booking]),
-    percentage: sessionHours ? TEACHER_PROVIDER_COMMISSION_PERCENTAGE : PROVIDER_COMMISSION_PERCENTAGE,
-    includeFor: ['provider'],
-  };
-
-  const customerCommission = {
-    code: 'line-item/customer-commission',
-    unitPrice: calculateTotalFromLineItems([booking]),
-    percentage: sessionHours ? (isAnyBookingMadeBefore ? TEACHER_CUSTOMER_COMMISSION_PERCENTAGE_EXISTING_USER : TEACHER_CUSTOMER_COMMISSION_PERCENTAGE_NEW_USER) : CUSTOMER_COMMISSION_PERCENTAGE,
-    includeFor: ['customer'],
-  };
-
-  const lineItems = [booking, providerCommission, customerCommission];
-
+  const providerCommission = getProviderCommission(listing, booking);
+  const customerCommission = getCustomerCommission(listing, booking, isFirstTimeBooking)
+  
+  const lineItems = [booking, ...providerCommission, ...customerCommission];
   return lineItems;
 };

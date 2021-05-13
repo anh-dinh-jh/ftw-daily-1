@@ -7,6 +7,13 @@ const { getAmountAsDecimalJS, convertDecimalJSToNumber } = require('./currency')
 const { nightsBetween, daysBetween } = require('./dates');
 const LINE_ITEM_NIGHT = 'line-item/night';
 const LINE_ITEM_DAY = 'line-item/day';
+const LISTING_TYPE_DEFAULT = 'Listing'
+const LISTING_TYPE_TEACHER = 'TeacherListing'
+const PROVIDER_COMMISSION_PERCENTAGE = -10;
+const TEACHER_PROVIDER_COMMISSION_PERCENTAGE = -25;
+const TEACHER_LISTING_CUSTOMER_COMMISSION_PERCENTAGE_NEW_USER = 15;
+const TEACHER_LISTING_CUSTOMER_COMMISSION_PERCENTAGE_EXISTING_USER = 55;
+
 
 /** Helper functions for constructing line items*/
 
@@ -203,3 +210,69 @@ exports.constructValidLineItems = lineItems => {
   });
   return lineItemsWithTotals;
 };
+
+
+/**
+ * Get a provider commission based on listing types
+ * @param {Array} listing
+ * @param {Object} booking
+ * 
+ * @returns {Array} lineItems with lineTotal and reversal info
+ *
+ */
+exports.getProviderCommission = (listing, booking) => {
+  const publicData = listing.attributes.publicData;
+  const listingType = publicData && publicData.listingType;
+  const providerCommission = [];
+  const initialValues = {
+    code: 'line-item/provider-commission',
+    unitPrice: this.calculateTotalFromLineItems([booking]),
+    includeFor: ['provider'],
+  }
+  switch (listingType) {
+    case LISTING_TYPE_TEACHER: {
+      providerCommission.push({
+        ...initialValues,
+        percentage: TEACHER_PROVIDER_COMMISSION_PERCENTAGE
+      });
+      break;
+    }
+    default: {
+      providerCommission.push({
+        ...initialValues,
+        percentage: PROVIDER_COMMISSION_PERCENTAGE
+      })
+    } 
+  }
+  return providerCommission;
+}
+
+/**
+ * Get a customer commission based on listing types
+ * @param {Array} listing
+ * @param {Object} booking
+ * @param {Boolean} isFirstTimeBooking
+ * @returns {Array} lineItems with lineTotal and reversal info
+ *
+ */
+exports.getCustomerCommission = (listing, booking, isFirstTimeBooking) => {
+  const publicData = listing.attributes.publicData;
+  const listingType = publicData && publicData.listingType;
+  const customerCommission = [];
+
+  const initialValues = {
+    code: 'line-item/customer-commission',
+    unitPrice: this.calculateTotalFromLineItems([booking]),
+    includeFor: ['customer'],
+  }
+  switch (listingType) {
+    case LISTING_TYPE_TEACHER: {
+      customerCommission.push({
+        ...initialValues,
+        percentage: isFirstTimeBooking ? TEACHER_LISTING_CUSTOMER_COMMISSION_PERCENTAGE_EXISTING_USER : TEACHER_LISTING_CUSTOMER_COMMISSION_PERCENTAGE_NEW_USER
+      });
+      break;
+    }
+  }
+  return customerCommission;
+}

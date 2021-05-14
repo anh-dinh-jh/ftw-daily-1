@@ -29,11 +29,8 @@ export class BookingDatesTimeFormComponent extends Component {
   }
 
   getStartAndEndTime(date, fromTime, toTime) {
-    const startDate = new Date(date);
-    const endDate = new Date(date);
-    startDate.setHours(fromTime);
-    endDate.setHours(toTime);
-    endDate.setDate(endDate.getDate() + 1);
+    const startDate = moment(date).set('hours', fromTime).toDate();
+    const endDate = moment(date).add(1, 'days').set('hours', toTime).toDate();
     return { startDate, endDate };
   }
 

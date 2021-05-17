@@ -10,7 +10,8 @@ import {
   isPrivileged,
 } from '../../util/transaction';
 import * as log from '../../util/log';
-import { fetchCurrentUserHasOrdersSuccess, fetchCurrentUser } from '../../ducks/user.duck';
+import { fetchCurrentUserHasOrdersSuccess, fetchCurrentUser, currentUserShowSuccess } from '../../ducks/user.duck';
+import { LISTING_TYPE_DEFAULT } from '../../util/types';
 
 // ================ Action types ================ //
 
@@ -171,13 +172,16 @@ export const initiateOrder = (orderParams, transactionId) => (dispatch, getState
     ? TRANSITION_REQUEST_PAYMENT_AFTER_ENQUIRY
     : TRANSITION_REQUEST_PAYMENT;
   const isPrivilegedTransition = isPrivileged(transition);
+  const isFirstTimeBooking = orderParams.isFirstTimeBooking;
 
   const bookingData = {
     startDate: orderParams.bookingStart,
     endDate: orderParams.bookingEnd,
-    isFirstTimeBooking: orderParams.isFirstTimeBooking,
+    isFirstTimeBooking,
   };
 
+  const { listingType = LISTING_TYPE_DEFAULT } = orderParams.listing.attributes.publicData;
+  const keyFirstTimeBooking = `${listingType}FirstTimeBooking`;
   const bodyParams = isTransition
     ? {
         id: transactionId,
@@ -197,6 +201,29 @@ export const initiateOrder = (orderParams, transactionId) => (dispatch, getState
   const handleSucces = response => {
     const entities = denormalisedResponseEntities(response);
     const order = entities[0];
+    
+    // Save transaction id of the current listing that has promo to the user
+    if (isFirstTimeBooking) {
+      sdk.currentUser.updateProfile({
+        protectedData: {
+          [keyFirstTimeBooking]: order.id.uuid
+        }
+      }, {
+        expand: true,
+        include: ['profileImage'],
+        'fields.image': ['variants.square-small', 'variants.square-small2x'],
+      }).then(response => {
+        const entities = denormalisedResponseEntities(response);
+        if (entities.length !== 1) {
+          throw new Error('Expected a resource in the sdk.currentUser.updateProfile response');
+        }
+        const currentUser = entities[0];
+  
+        // Update current user in state.user.currentUser through user.duck.js
+        dispatch(currentUserShowSuccess(currentUser));
+      });
+    }
+
     dispatch(initiateOrderSuccess(order));
     dispatch(fetchCurrentUserHasOrdersSuccess(true));
     return order;

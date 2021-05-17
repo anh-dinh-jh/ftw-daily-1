@@ -53,7 +53,6 @@ import {
   stripeCustomer,
   confirmPayment,
   sendMessage,
-  fetchTransactions
 } from './CheckoutPage.duck';
 import { storeData, storedData, clearData } from './CheckoutPageSessionHelpers';
 import css from './CheckoutPage.module.css';
@@ -380,6 +379,7 @@ export class CheckoutPageComponent extends Component {
         : {};
 
     const orderParams = {
+      listing: pageData.listing,
       listingId: pageData.listing.id,
       bookingStart: tx.booking.attributes.start,
       bookingEnd: tx.booking.attributes.end,

@@ -139,7 +139,7 @@ export const fetchReviewsError = error => ({
 });
 
 export const fetchTransactionsRequest = () => ({ type: FETCH_TRANSACTIONS_REQUEST });
-export const fetchTransactionsSuccess = reviews => ({ type: FETCH_TRANSACTIONS_SUCCESS, payload: reviews });
+export const fetchTransactionsSuccess = transactions => ({ type: FETCH_TRANSACTIONS_SUCCESS, payload: transactions });
 export const fetchTransactionsError = error => ({
   type: FETCH_TRANSACTIONS_ERROR,
   error: true,

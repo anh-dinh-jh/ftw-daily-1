@@ -7,7 +7,7 @@ import { withRouter } from 'react-router-dom';
 import config from '../../config';
 import routeConfiguration from '../../routeConfiguration';
 import { findOptionsForSelectFilter } from '../../util/search';
-import { LISTING_STATE_PENDING_APPROVAL, LISTING_STATE_CLOSED, propTypes } from '../../util/types';
+import { LISTING_STATE_PENDING_APPROVAL, LISTING_STATE_CLOSED, propTypes, LISTING_TYPE_DEFAULT } from '../../util/types';
 import { types as sdkTypes } from '../../util/sdkLoader';
 import {
   LISTING_PAGE_DRAFT_VARIANT,
@@ -56,7 +56,6 @@ import css from './TeacherListingPage.module.css';
 import { TRANSITIONS_OF_CANCELED_BOOKING } from '../../util/transaction';
 
 const MIN_LENGTH_FOR_LONG_WORDS_IN_TITLE = 16;
-const COMISSION_NEW_USER = 15;
 
 const { UUID } = sdkTypes;
 
@@ -78,13 +77,16 @@ const listLabel = (list, key) => {
   return l ? l.label : key;
 };
 
-const checkAnyPreviousBookingHasPromotion = (transactions) => {
-  return transactions && transactions.length > 0 && transactions.filter(transaction => {
-    const unitPriceWithDiscount = transaction.attributes.lineItems[2].unitPrice.amount * (COMISSION_NEW_USER / 100);
-    const lineTotal = transaction.attributes.lineItems[2].lineTotal.amount;
+const checkFirstTimeBooking = (transactions, currentUser, currentListing) => {
+
+  const { listingType = LISTING_TYPE_DEFAULT } = currentListing && currentListing.attributes.publicData;
+  const keyFirstTimeBooking = `${listingType}FirstTimeBooking`;
+  const transactionId = currentUser && currentUser.attributes.profile.protectedData && currentUser.attributes.profile.protectedData[keyFirstTimeBooking];
+  // This is a first-time booking if if there is no previous transactions
+  return (!!(!transactionId) || transactions && transactions.filter(transaction => {
     const lastTransition = transaction.attributes.lastTransition;
-    return (unitPriceWithDiscount === lineTotal) && (!TRANSITIONS_OF_CANCELED_BOOKING.includes(lastTransition));
-  }).length > 0;
+    return transaction.id.uuid === transactionId && (!TRANSITIONS_OF_CANCELED_BOOKING.includes(lastTransition));
+  }).length === 0);
 }
 
 export class TeacherListingPageComponent extends Component {
@@ -109,13 +111,14 @@ export class TeacherListingPageComponent extends Component {
       params,
       callSetInitialValues,
       onInitializeCardPaymentData,
-      transactions
+      transactions,
+      currentUser,
     } = this.props;
     const listingId = new UUID(params.id);
     const listing = getListing(listingId);
     
     const { bookingDates, ...bookingData } = values;
-    const isFirstTimeBooking = checkAnyPreviousBookingHasPromotion(transactions);
+    const isFirstTimeBooking = checkFirstTimeBooking(transactions, currentUser, listing);
     const initialValues = {
       listing,
       bookingData: { isFirstTimeBooking },
@@ -398,7 +401,7 @@ export class TeacherListingPageComponent extends Component {
   const { sessionHours } = publicData;
 
   // Check if the user has made a booking before
-  const isFirstTimeBooking = checkAnyPreviousBookingHasPromotion(transactions);
+  const isFirstTimeBooking = checkFirstTimeBooking(transactions, currentUser, currentListing);
 
   return (
       <Page

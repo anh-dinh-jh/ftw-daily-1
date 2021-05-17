@@ -27,6 +27,9 @@ import {
   txRoleIsCustomer,
   getUserTxRole,
   isRelevantPastTransition,
+  TRANSITION_CUSTOMER_CANCEL_BEFORE_ACCEPTED,
+  TRANSITION_CUSTOMER_CANCEL_AFTER_ACCEPTED,
+  TRANSITION_PROVIDER_CANCEL,
 } from '../../util/transaction';
 import { propTypes } from '../../util/types';
 import * as log from '../../util/log';
@@ -114,7 +117,6 @@ const resolveTransitionMessage = (
   const isOwnTransition = transition.by === ownRole;
   const currentTransition = transition.transition;
   const displayName = otherUsersName;
-
   switch (currentTransition) {
     case TRANSITION_CONFIRM_PAYMENT:
       return isOwnTransition ? (
@@ -145,6 +147,19 @@ const resolveTransitionMessage = (
       );
     case TRANSITION_CANCEL:
       return <FormattedMessage id="ActivityFeed.transitionCancel" />;
+    case TRANSITION_CUSTOMER_CANCEL_BEFORE_ACCEPTED:
+    case TRANSITION_CUSTOMER_CANCEL_AFTER_ACCEPTED:
+      return txRoleIsProvider(ownRole) ? (
+          <FormattedMessage id="ActivityFeed.transitionCancelByCustomer" values={{ displayName }} />
+        ) : (
+          <FormattedMessage id="ActivityFeed.ownTransitionCancelByCustomer" />
+        );
+    case TRANSITION_PROVIDER_CANCEL:
+      return txRoleIsCustomer(ownRole) ? (
+          <FormattedMessage id="ActivityFeed.transitionCancelByProvider" values={{ displayName }} />
+        ) : (
+          <FormattedMessage id="ActivityFeed.ownTransitionCancelByProvider" />
+        );
     case TRANSITION_COMPLETE:
       // Show the leave a review link if the state is delivered and if the current user is the first to leave a review
       const reviewPeriodJustStarted = txIsDelivered(transaction);

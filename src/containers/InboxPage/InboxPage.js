@@ -13,6 +13,7 @@ import {
   txHasBeenDelivered,
   txIsPaymentExpired,
   txIsPaymentPending,
+  txIsCanceledByCustomer,
 } from '../../util/transaction';
 import { propTypes, DATE_TYPE_DATE, DATE_TYPE_DATETIME, LINE_ITEM_HOURS } from '../../util/types';
 import { ensureCurrentUser } from '../../util/data';
@@ -128,6 +129,16 @@ export const txState = (intl, tx, type) => {
       }),
     };
   } else if (txIsCanceled(tx)) {
+    return {
+      nameClassName: css.nameNotEmphasized,
+      bookingClassName: css.bookingNoActionNeeded,
+      lastTransitionedAtClassName: css.lastTransitionedAtNotEmphasized,
+      stateClassName: css.stateNoActionNeeded,
+      state: intl.formatMessage({
+        id: 'InboxPage.stateCanceled',
+      }),
+    };
+  } else if (txIsCanceledByCustomer(tx)) {
     return {
       nameClassName: css.nameNotEmphasized,
       bookingClassName: css.bookingNoActionNeeded,

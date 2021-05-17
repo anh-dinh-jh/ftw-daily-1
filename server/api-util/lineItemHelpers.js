@@ -269,7 +269,7 @@ exports.getCustomerCommission = (listing, booking, isFirstTimeBooking) => {
     case LISTING_TYPE_TEACHER: {
       customerCommission.push({
         ...initialValues,
-        percentage: isFirstTimeBooking ? TEACHER_LISTING_CUSTOMER_COMMISSION_PERCENTAGE_EXISTING_USER : TEACHER_LISTING_CUSTOMER_COMMISSION_PERCENTAGE_NEW_USER
+        percentage: isFirstTimeBooking ? TEACHER_LISTING_CUSTOMER_COMMISSION_PERCENTAGE_NEW_USER : TEACHER_LISTING_CUSTOMER_COMMISSION_PERCENTAGE_EXISTING_USER
       });
       break;
     }

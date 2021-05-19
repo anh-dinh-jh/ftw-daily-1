@@ -67,6 +67,13 @@ export const maxLength = (message, maximumLength) => value => {
   return hasLength && value.length <= maximumLength ? VALID : message;
 };
 
+export const minSessionHours = (message) => value => {
+  if (!value) {
+    return VALID;
+  }
+  return parseNum(value) >= 1 ? VALID : message;
+};
+
 export const nonEmptyArray = message => value => {
   return value && Array.isArray(value) && value.length > 0 ? VALID : message;
 };

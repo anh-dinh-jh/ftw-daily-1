@@ -6,7 +6,7 @@ import { intlShape, injectIntl, FormattedMessage } from '../../util/reactIntl';
 import classNames from 'classnames';
 import arrayMutators from 'final-form-arrays';
 import { propTypes, TEACHING_TYPE_PART_TIME, TEACHING_TYPE_FULL_TIME } from '../../util/types';
-import { maxLength, required, composeValidators } from '../../util/validators';
+import { maxLength, required, composeValidators, minSessionHours, requiredFieldArrayCheckbox } from '../../util/validators';
 import { Form, Button, FieldTextInput, FieldCheckboxGroup, FieldSelect } from '../../components';
 
 import css from './EditTeacherListingGeneralForm.module.css';
@@ -50,6 +50,9 @@ const EditTeacherListingGeneralFormComponent = props => (
           maxLength: TITLE_MAX_LENGTH,
         }
       );
+      const minSessionHoursMessage = intl.formatMessage({ 
+        id: 'EditTeacherListingGeneralForm.minSessionHours' 
+      });
 
       const descriptionMessage = intl.formatMessage({
         id: 'EditTeacherListingGeneralForm.description',
@@ -58,17 +61,31 @@ const EditTeacherListingGeneralFormComponent = props => (
         id: 'EditTeacherListingGeneralForm.descriptionPlaceholder',
       });
       const maxLength60Message = maxLength(maxLengthMessage, TITLE_MAX_LENGTH);
+
       const descriptionRequiredMessage = intl.formatMessage({
         id: 'EditTeacherListingGeneralForm.descriptionRequired',
       });
-      const teachingTypePlaceholder = intl.formatMessage({
-        id: 'EditTeacherListingGeneralForm.teachingTypesPlaceholder',
-      })
+      const subjectsRequiredMessage = intl.formatMessage({
+        id: 'EditTeacherListingGeneralForm.subjectsRequired',
+      });
+      const subjectsRequiredValidatorMessage = requiredFieldArrayCheckbox(subjectsRequiredMessage);
+      const levelsRequiredMessage = intl.formatMessage({
+        id: 'EditTeacherListingGeneralForm.levelsRequired',
+      });
+      const levelsRequiredValidatorMessage = requiredFieldArrayCheckbox(levelsRequiredMessage);
+
       const teachingTypesLabel = intl.formatMessage({
         id: 'EditTeacherListingGeneralForm.teachingTypesLabel',
       });
       const teachingHoursLabel = intl.formatMessage({
         id: 'EditTeacherListingGeneralForm.teachingHoursLabel',
+      });
+      const minSessionHoursValidatorMessage = minSessionHours(minSessionHoursMessage);
+      const sessionHoursRequiredMessage = intl.formatMessage({
+        id: 'EditTeacherListingGeneralForm.sessionHoursRequired',
+      });
+      const teachingTypeRequiredMessage = intl.formatMessage({
+        id: 'EditTeacherListingGeneralForm.teachingTypeRequired',
       });
 
       const { updateListingError, createListingDraftError, showListingsError } = fetchErrors || {};
@@ -122,9 +139,9 @@ const EditTeacherListingGeneralFormComponent = props => (
             placeholder={descriptionPlaceholderMessage}
             validate={composeValidators(required(descriptionRequiredMessage))}
           />
-          <FieldCheckboxGroup className={css.checkboxes} id='subjects' name='subjects' label="Subjects" options={subjectOptions}/>
+          <FieldCheckboxGroup className={css.checkboxes} id='subjects' name='subjects' label="Subjects" options={subjectOptions} validate={composeValidators(subjectsRequiredValidatorMessage)} />
         
-          <FieldCheckboxGroup className={css.checkboxes} id='levels' name='levels' label="Levels" options={levelOptions}/>
+          <FieldCheckboxGroup className={css.checkboxes} id='levels' name='levels' label="Levels" options={levelOptions} validate={composeValidators(levelsRequiredValidatorMessage)} />
 
           <FieldTextInput
             id='teaching-hours'
@@ -142,10 +159,10 @@ const EditTeacherListingGeneralFormComponent = props => (
                 return;
               }
               
-              form.change('sessionHours', Number(hours) <= 0 ? 1 : hours);
+              form.change('sessionHours', hours);
               form.change('teachingType', TEACHING_TYPE_PART_TIME);
             }}
-            validate={composeValidators(required(titleRequiredMessage))}
+            validate={composeValidators(required(sessionHoursRequiredMessage), minSessionHoursValidatorMessage)}
           />
 
           <FieldSelect         
@@ -154,7 +171,7 @@ const EditTeacherListingGeneralFormComponent = props => (
             className={css.category}
             label={teachingTypesLabel}
             disabled
-            validate={composeValidators(required(titleRequiredMessage))}
+            validate={composeValidators(required(teachingTypeRequiredMessage))}
           >
               {teachingTypeOptions.map(t => (
                 <option key={t.key} value={t.key}>{t.label}</option>

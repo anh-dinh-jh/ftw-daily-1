@@ -7,7 +7,7 @@ import { withRouter } from 'react-router-dom';
 import config from '../../config';
 import routeConfiguration from '../../routeConfiguration';
 import { findOptionsForSelectFilter } from '../../util/search';
-import { LISTING_STATE_PENDING_APPROVAL, LISTING_STATE_CLOSED, propTypes, LISTING_TYPE_DEFAULT } from '../../util/types';
+import { LISTING_STATE_PENDING_APPROVAL, LISTING_STATE_CLOSED, propTypes, LISTING_TYPE_DEFAULT, LISTING_TYPE_TEACHER } from '../../util/types';
 import { types as sdkTypes } from '../../util/sdkLoader';
 import {
   LISTING_PAGE_DRAFT_VARIANT,
@@ -244,9 +244,16 @@ export class TeacherListingPageComponent extends Component {
       showListingError &&
       showListingError.status === 403;
     const shouldShowPublicTeacherListingPage = pendingIsApproved || pendingOtherUsersListing;
+    
+    // Redirect to the correct listing page if this is not a correct path
+    const listingCurrentType = currentListing.attributes.publicData && currentListing.attributes.publicData.listingType ? currentListing.attributes.publicData.listingType : LISTING_TYPE_DEFAULT;
+    const isCorrectPath = listingCurrentType === LISTING_TYPE_TEACHER;
 
     if (shouldShowPublicTeacherListingPage) {
       return <NamedRedirect name="TeacherListingPage" params={params} search={location.search} />;
+    }
+    if (!isCorrectPath) {
+      return <NamedRedirect name={`${listingCurrentType}Page`} params={params} search={location.search}/>
     }
 
     const {

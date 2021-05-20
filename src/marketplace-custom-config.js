@@ -198,7 +198,6 @@ export const filters = [
     group: 'secondary',
     queryParamNames: ['pub_teaching-type'],
     config: {
-      searchMode: 'has_all',
       options: [
         {
           key: 'part-time',
